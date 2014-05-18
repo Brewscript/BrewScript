@@ -1,0 +1,2406 @@
+<html><!--<html manifest="brew.mf">--><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<link rel="Shortcut Icon" type="image/x-icon" href="http://www.brewscript.com/icon.ico">
+<title>BrewScript</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="description" content="BrewScript: Free/Open Source Homebrew Recipe Application.  All the information you need to brew is provided.">
+<script>
+
+	var xml;
+	var xmlhttp;
+	var xmlhttp2;
+	var graincount=0
+	var steps=0;
+	var ratio=1;
+	var weight=0;
+	var hopcount=0;
+	var grainColors = new Array();
+	var grainGravs = new Array();
+	var grainDetails = new Array();
+	var grainsIndexed=false;
+	var hopAlphas = new Array();
+	var hopIndexed = false;
+	var efficiency = 75;
+	var boilGrav = 0;
+	var finalGrav = 0;
+	var mcuTotal = 0;
+	var grainAbsorption = 0.13;
+	var equipLoss = 0.1;
+	var totalWater=0;
+	var beerXML = '';
+	var srm = new Array();
+	var beerxml = '';
+	var nonmash=0;
+	var extracts=0;
+	var dryextracts=0;
+	var sugars=0;
+	var gu=0;
+	var beerxmldoc = null;
+	var tunLoss=0.2;
+	var loaded=false;
+	var sync=false;
+	var reload=false;
+	var deletedRecipe='';
+	var currentRecipe='';
+	var loading=false;
+	
+	srm[1]='#fafad2';
+	srm[2]='#fafacc';
+	srm[3]='#fafac7';
+	srm[4]='#fafac1';
+	srm[5]='#fafabc';
+	srm[6]='#fafab6';
+	srm[7]='#fafab1';
+	srm[8]='#fafaab';
+	srm[9]='#fafaa6';
+	srm[10]='#fafaa0';
+	srm[11]='#fafa9b';
+	srm[12]='#fafa95';
+	srm[13]='#fafa90';
+	srm[14]='#fafa8a';
+	srm[15]='#fafa85';
+	srm[16]='#fafa7f';
+	srm[17]='#fafa7a';
+	srm[18]='#fafa74';
+	srm[19]='#fafa6f';
+	srm[20]='#fafa69';
+	srm[21]='#fafa64';
+	srm[22]='#fafa5e';
+	srm[23]='#fafa59';
+	srm[24]='#fafa53';
+	srm[25]='#fafa4e';
+	srm[26]='#f9fa48';
+	srm[27]='#f8f943';
+	srm[28]='#f7f83d';
+	srm[29]='#f6f738';
+	srm[30]='#f5f632';
+	srm[31]='#f4f52d';
+	srm[32]='#f3f42d';
+	srm[33]='#f2f22d';
+	srm[34]='#f1f02e';
+	srm[35]='#f0ee2e';
+	srm[36]='#efec2e';
+	srm[37]='#eeea2e';
+	srm[38]='#ede82f';
+	srm[39]='#ece62f';
+	srm[40]='#ebe42f';
+	srm[41]='#eae22f';
+	srm[42]='#e9e030';
+	srm[43]='#e8de30';
+	srm[44]='#e7dc30';
+	srm[45]='#e6da30';
+	srm[46]='#e5d831';
+	srm[47]='#e4d631';
+	srm[48]='#e3d431';
+	srm[49]='#e2d231';
+	srm[50]='#e1d032';
+	srm[51]='#e0ce32';
+	srm[52]='#dfcc32';
+	srm[53]='#deca32';
+	srm[54]='#ddc833';
+	srm[55]='#dcc633';
+	srm[56]='#dbc433';
+	srm[57]='#dac233';
+	srm[58]='#d9c034';
+	srm[59]='#d8be34';
+	srm[60]='#d7bc34';
+	srm[61]='#d6ba34';
+	srm[62]='#d5b835';
+	srm[63]='#d4b635';
+	srm[64]='#d3b435';
+	srm[65]='#d2b235';
+	srm[66]='#d1b036';
+	srm[67]='#d0ae36';
+	srm[68]='#cfac36';
+	srm[69]='#ceaa36';
+	srm[70]='#cda837';
+	srm[71]='#cca637';
+	srm[72]='#cba437';
+	srm[73]='#caa237';
+	srm[74]='#c9a038';
+	srm[75]='#c89e38';
+	srm[76]='#c89c38';
+	srm[77]='#c79a38';
+	srm[78]='#c79838';
+	srm[79]='#c69638';
+	srm[80]='#c69438';
+	srm[81]='#c59238';
+	srm[82]='#c59038';
+	srm[83]='#c48e38';
+	srm[84]='#c48d38';
+	srm[85]='#c38c38';
+	srm[86]='#c38b38';
+	srm[87]='#c28b38';
+	srm[88]='#c28a38';
+	srm[89]='#c18938';
+	srm[90]='#c18838';
+	srm[91]='#c08838';
+	srm[92]='#c08738';
+	srm[93]='#c08638';
+	srm[94]='#c08538';
+	srm[95]='#c08538';
+	srm[96]='#c08438';
+	srm[97]='#c08338';
+	srm[98]='#c08238';
+	srm[99]='#c08238';
+	srm[100]='#c08138';
+	srm[101]='#c08038';
+	srm[102]='#c07f38';
+	srm[103]='#c07f38';
+	srm[104]='#c07e38';
+	srm[105]='#c07d38';
+	srm[106]='#c07c38';
+	srm[107]='#c07c38';
+	srm[108]='#c07b38';
+	srm[109]='#c07a38';
+	srm[110]='#c07938';
+	srm[111]='#c07938';
+	srm[112]='#c07838';
+	srm[113]='#c07738';
+	srm[114]='#c07638';
+	srm[115]='#c07638';
+	srm[116]='#c07538';
+	srm[117]='#c07438';
+	srm[118]='#c07338';
+	srm[119]='#c07338';
+	srm[120]='#c07238';
+	srm[121]='#c07138';
+	srm[122]='#c07038';
+	srm[123]='#c07038';
+	srm[124]='#c06f38';
+	srm[125]='#c06e38';
+	srm[126]='#c06d38';
+	srm[127]='#c06d38';
+	srm[128]='#c06c38';
+	srm[129]='#bf6b38';
+	srm[130]='#be6a38';
+	srm[131]='#bd6a38';
+	srm[132]='#bc6938';
+	srm[133]='#bb6838';
+	srm[134]='#ba6738';
+	srm[135]='#b96738';
+	srm[136]='#b86638';
+	srm[137]='#b76538';
+	srm[138]='#b66438';
+	srm[139]='#b56438';
+	srm[140]='#b46338';
+	srm[141]='#b36238';
+	srm[142]='#b26138';
+	srm[143]='#b16138';
+	srm[144]='#af6037';
+	srm[145]='#ae5f37';
+	srm[146]='#ac5e37';
+	srm[147]='#ab5e37';
+	srm[148]='#a95d36';
+	srm[149]='#a85c36';
+	srm[150]='#a75b36';
+	srm[151]='#a55b36';
+	srm[152]='#a45a35';
+	srm[153]='#a25935';
+	srm[154]='#a15835';
+	srm[155]='#9f5835';
+	srm[156]='#9e5734';
+	srm[157]='#9d5634';
+	srm[158]='#9b5534';
+	srm[159]='#9a5534';
+	srm[160]='#985433';
+	srm[161]='#975333';
+	srm[162]='#955233';
+	srm[163]='#945233';
+	srm[164]='#935132';
+	srm[165]='#915032';
+	srm[166]='#904f32';
+	srm[167]='#8e4e32';
+	srm[168]='#8d4d31';
+	srm[169]='#8b4c31';
+	srm[170]='#8a4b30';
+	srm[171]='#894b2f';
+	srm[172]='#874a2f';
+	srm[173]='#86492e';
+	srm[174]='#84482d';
+	srm[175]='#83482d';
+	srm[176]='#81472c';
+	srm[177]='#80462b';
+	srm[178]='#7f452b';
+	srm[179]='#7d452a';
+	srm[180]='#7c4429';
+	srm[181]='#7a4329';
+	srm[182]='#794228';
+	srm[183]='#774227';
+	srm[184]='#764127';
+	srm[185]='#754026';
+	srm[186]='#733f25';
+	srm[187]='#723f25';
+	srm[188]='#703e24';
+	srm[189]='#6f3d23';
+	srm[190]='#6d3c22';
+	srm[191]='#6c3c21';
+	srm[192]='#6b3b20';
+	srm[193]='#693a1f';
+	srm[194]='#68391d';
+	srm[195]='#66391c';
+	srm[196]='#65381b';
+	srm[197]='#63371a';
+	srm[198]='#623619';
+	srm[199]='#613618';
+	srm[200]='#5f3517';
+	srm[201]='#5e3415';
+	srm[202]='#5c3314';
+	srm[203]='#5b3313';
+	srm[204]='#593212';
+	srm[205]='#583111';
+	srm[206]='#573010';
+	srm[207]='#55300f';
+	srm[208]='#542f0d';
+	srm[209]='#522e0c';
+	srm[210]='#512d0b';
+	srm[211]='#4f2d0a';
+	srm[212]='#4e2c09';
+	srm[213]='#4d2b08';
+	srm[214]='#4b2a09';
+	srm[215]='#4a2a09';
+	srm[216]='#48290a';
+	srm[217]='#47280a';
+	srm[218]='#45270b';
+	srm[219]='#44270b';
+	srm[220]='#43260c';
+	srm[221]='#41250c';
+	srm[222]='#40240d';
+	srm[223]='#3e240d';
+	srm[224]='#3d230e';
+	srm[225]='#3b220e';
+	srm[226]='#3a210f';
+	srm[227]='#39210f';
+	srm[228]='#372010';
+	srm[229]='#361f10';
+	srm[230]='#341e11';
+	srm[231]='#331e11';
+	srm[232]='#311d12';
+	srm[233]='#301c12';
+	srm[234]='#2f1b13';
+	srm[235]='#2d1b13';
+	srm[236]='#2c1a14';
+	srm[237]='#2a1914';
+	srm[238]='#291815';
+	srm[239]='#271815';
+	srm[240]='#261716';
+	srm[241]='#251615';
+	srm[242]='#251615';
+	srm[243]='#241615';
+	srm[244]='#241514';
+	srm[245]='#231514';
+	srm[246]='#231514';
+	srm[247]='#221413';
+	srm[248]='#221413';
+	srm[249]='#211413';
+	srm[250]='#211312';
+	srm[251]='#201312';
+	srm[252]='#201312';
+	srm[253]='#1f1211';
+	srm[254]='#1f1211';
+	srm[255]='#1e1211';
+	srm[256]='#1e1110';
+	srm[257]='#1d1110';
+	srm[258]='#1d1110';
+	srm[259]='#1c100f';
+	srm[260]='#1c100f';
+	srm[261]='#1b100f';
+	srm[262]='#1b0f0e';
+	srm[263]='#1a0f0e';
+	srm[264]='#1a0f0e';
+	srm[265]='#190e0d';
+	srm[266]='#190e0d';
+	srm[267]='#180e0d';
+	srm[268]='#180d0c';
+	srm[269]='#170d0c';
+	srm[270]='#170d0c';
+	srm[271]='#160c0b';
+	srm[272]='#160c0b';
+	srm[273]='#150c0b';
+	srm[274]='#150b0a';
+	srm[275]='#140b0a';
+	srm[276]='#140b0a';
+	srm[277]='#130a09';
+	srm[278]='#130a09';
+	srm[279]='#120a09';
+	srm[280]='#120908';
+	srm[281]='#110908';
+	srm[282]='#110908';
+	srm[283]='#100807';
+	srm[284]='#100807';
+	srm[285]='#0f0807';
+	srm[286]='#0f0706';
+	srm[287]='#0e0706';
+	srm[288]='#0e0706';
+	srm[289]='#0d0605';
+	srm[290]='#0d0605';
+	srm[291]='#0c0605';
+	srm[292]='#0c0504';
+	srm[293]='#0b0504';
+	srm[294]='#0b0504';
+	srm[295]='#0a0403';
+	srm[296]='#0a0403';
+	srm[297]='#090403';
+	srm[298]='#090302';
+	srm[299]='#080302';
+	srm[300]='#080302';
+	srm[310]='#060201';
+	var shared=false;
+
+	var keyStr = "ABCDEFGHIJKLMNOP" +
+               "QRSTUVWXYZabcdef" +
+               "ghijklmnopqrstuv" +
+               "wxyz0123456789+/" +
+               "=";
+
+	function encode64(input) {
+	     input = escape(input);
+	     var output = "";
+	     var chr1, chr2, chr3 = "";
+	     var enc1, enc2, enc3, enc4 = "";
+	     var i = 0;
+
+	     do {
+		chr1 = input.charCodeAt(i++);
+		chr2 = input.charCodeAt(i++);
+		chr3 = input.charCodeAt(i++);
+
+		enc1 = chr1 >> 2;
+		enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+		enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+		enc4 = chr3 & 63;
+
+		if (isNaN(chr2)) {
+		   enc3 = enc4 = 64;x
+		} else if (isNaN(chr3)) {
+		   enc4 = 64;
+		}
+
+		output = output +
+		   keyStr.charAt(enc1) +
+		   keyStr.charAt(enc2) +
+		   keyStr.charAt(enc3) +
+		   keyStr.charAt(enc4);
+		chr1 = chr2 = chr3 = "";
+		enc1 = enc2 = enc3 = enc4 = "";
+	     } while (i < input.length);
+
+	     return output;
+	}
+
+
+	function showElement(id)
+	{
+		getItem(id).style.display='inline';
+	}
+
+	function hideElement(id)
+	{
+		getItem(id).style.display='none';
+	}
+
+	function showSection(section)
+	{
+		getItem(section+'-div').style.display='inline';
+		getItem(section+'-hide').style.display='inline';
+		getItem(section+'-show').style.display='none';
+	}
+	
+	function hideSection(section)
+	{
+		getItem(section+'-div').style.display='none';
+		getItem(section+'-hide').style.display='none';
+		getItem(section+'-show').style.display='inline';
+	}	
+
+	
+	function getText(obj)
+	{
+		if (obj.childNodes)
+			if (obj.childNodes.length>0)
+				return obj.childNodes[0].nodeValue;
+		return '';
+	}
+
+	function getNum(obj)
+	{
+		var num = parseFloat(document.getElementById(obj).value);
+		if (num == NaN )
+			return 0;
+		if (num >0)
+			return num;
+		else
+			return 0;
+	}
+
+	function getNodeText(obj,node)
+	{
+		if(obj.getElementsByTagName(node).length>0)
+			return getText(obj.getElementsByTagName(node)[0]);
+		else
+			return '';
+	}
+
+	function getItem(id)
+	{
+		return document.getElementById(id);
+	}
+
+	
+	function addItemToNewCell(obj,tag)
+	{
+		var td = document.createElement('TD');
+		var item = document.createElement(tag);
+		obj.appendChild(td);
+		td.appendChild(item);
+		return item;
+	}
+
+	function addTextToNewCell(obj,text)
+	{
+		var td = document.createElement('TD');
+		var item = document.createTextNode(text);
+		obj.appendChild(td);
+		td.appendChild(item);
+		return item;
+	}
+
+	function addTextToNewHeader(obj,text)
+	{
+		var td = document.createElement('TH');
+		var item = document.createTextNode(text);
+		obj.appendChild(td);
+		td.appendChild(item);
+		return item;
+	}
+
+	function addRow(obj)
+	{
+		var tr = document.createElement('TR');
+		obj.appendChild(tr);
+		return tr;
+	}
+
+	function addCell(obj)
+	{
+		var td = document.createElement('TD');
+		obj.appendChild(td);
+		return td;
+	}
+
+	function addHeader(obj)
+	{
+		var td = document.createElement('TD');
+		obj.appendChild(td);
+		return td;
+	}
+
+	function receiveXML()
+	{
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+			
+			xml = xmlhttp.responseXML;
+			addGrainList();
+			addHopList();
+		}
+	}
+
+	function getDatabase()
+	{
+		
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp=new XMLHttpRequest();
+		}
+		else
+		{// code for IE6, IE5
+		  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xmlhttp.open("GET","database.xml",true);
+		xmlhttp.send();
+		xmlhttp.onreadystatechange=receiveXML;
+
+		
+	}
+
+	function saveXmlToServer(key,xml)
+	{
+		
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp2=new XMLHttpRequest();
+		}
+		else
+		{// code for IE6, IE5
+		  xmlhttp2=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xml="<BEERXML><KEY>"+key+"</KEY><XMLDATA>"+xml+"</XMLDATA></BEERXML>";
+		xmlhttp2.open("POST","/save.php",true);
+		xmlhttp2.setRequestHeader("Content-Type", "text/xml");
+		xmlhttp2.send(xml);
+		saved=false;
+		xmlhttp2.onreadystatechange=saveStatus;
+		saved=false;
+
+		
+	}
+
+	function saveSharedXmlToServer(key,xml)
+	{
+		
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp2=new XMLHttpRequest();
+		}
+		else
+		{// code for IE6, IE5
+		  xmlhttp2=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xml="<BEERXML><KEY>"+key+"</KEY><XMLDATA>"+xml+"</XMLDATA></BEERXML>";
+		xmlhttp2.open("POST","save_shared.php",true);
+		xmlhttp2.setRequestHeader("Content-Type", "text/xml");
+		xmlhttp2.send(xml);
+		//alert(xml);
+		saved=true;
+		xmlhttp2.onreadystatechange=saveStatus;
+
+		
+	}
+
+	function saveStatus()
+	{
+		if (xmlhttp2.readyState==4 && xmlhttp2.status==200)
+		{
+			var saveResponse = xmlhttp2.responseText;
+			if(saved)
+			{
+				var url = window.location.toString();
+				window.location = url + "?shared="+xmlhttp2.responseText;
+				return;
+			}
+			//alert(getNodeText(saveResponse,"SAVE"));
+			if (reload)
+			{
+				var url=document.location; document.location=url;
+			}
+			else
+				getItem('sync-status').innerHTML=saveResponse + " "+(new Date()).toUTCString();
+			setToDefault();
+				
+			
+		}
+		else if (xmlhttp2.readyState==4 && xmlhttp2.status!=200)
+		{
+			alert("SAVE FAILURE");
+		}
+
+	}
+
+	function loadXmlFromServer(key)
+	{
+		
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp2=new XMLHttpRequest();
+		}
+		else
+		{// code for IE6, IE5
+		  xmlhttp2=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		var params="key="+key;
+		xmlhttp2.open("GET","/load.php?key="+key,true);
+		//xmlhttp2.setRequestHeader("Content-Type", "text/txt");
+		xmlhttp2.send();
+		xmlhttp2.onreadystatechange=loadServerXml;
+
+		
+	}
+
+	function loadXmlSharedFromServer(sharedkey)
+	{
+		
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp2=new XMLHttpRequest();
+		}
+		else
+		{// code for IE6, IE5
+		  xmlhttp2=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		var params="key="+sharedkey;
+		xmlhttp2.open("GET","load_shared.php?key="+sharedkey,true);
+		//xmlhttp2.setRequestHeader("Content-Type", "text/txt");
+		xmlhttp2.send();
+		xmlhttp2.onreadystatechange=loadSharedServerXml;
+
+		
+	}
+	
+	function loadSharedServerXml()
+	{
+		if (xmlhttp2.readyState==4 && xmlhttp2.status==200)
+		{
+			var loadResponse = xmlhttp2.responseText;
+			loadRecipes(loadResponse);			
+			//storeRecipes(loadResponse);
+			//setToDefault();
+			//alert(loadResponse);
+			//alert(xmlhttp2.responseText);
+		}
+		else if (xmlhttp2.readyState==4 && xmlhttp2.status!=200)
+		{
+			sync=false;
+			getItem('sync').checked=false;
+			alert("LOAD FAILURE");
+		}
+	}
+
+	function loadServerXml()
+	{
+		if (xmlhttp2.readyState==4 && xmlhttp2.status==200)
+		{
+			var loadResponse = xmlhttp2.responseText;
+			storeRecipes(loadResponse);
+			setToDefault();
+			//alert(loadResponse);
+			//alert(xmlhttp2.responseText);
+		}
+		else if (xmlhttp2.readyState==4 && xmlhttp2.status!=200)
+		{
+			sync=false;
+			getItem('sync').checked=false;
+			alert("LOAD FAILURE");
+		}
+	}
+
+	function addGrainList()
+	{
+		var select = document.createElement('SELECT');
+		select.setAttribute("id","grain-"+graincount+"-type");
+		var width=screen.width;
+		if(width>640)
+			width=640;
+		select.setAttribute('style','font-size:x-small;width:'+parseInt(width*.4)+'px');
+
+		select.setAttribute("onChange","updateAll();");
+
+		var option=document.createElement('OPTION');
+		option.appendChild(document.createTextNode("Select Grain"));
+		select.appendChild(option);
+		option=document.createElement('OPTION');
+		option.appendChild(document.createTextNode("-----------------Grains------------------"));
+		select.appendChild(option);
+		var g=1;
+		var grains = getItem("grain-tbl");
+		var fermentables = xml.getElementsByTagName("FERMENTABLE");
+		for (f=0;f<fermentables.length;f++)
+		{
+			var ferm = fermentables[f];
+			if ("Grain"==getNodeText(ferm,"TYPE") | "Adjunct"==getNodeText(ferm,"TYPE"))
+			{
+			var grain=getNodeText(ferm,"NAME");
+			var color=getNodeText(ferm,"COLOR");
+			option=document.createElement('OPTION');
+			option.appendChild(document.createTextNode(grain));
+			select.appendChild(option);
+			option.setAttribute('type','grain');
+			++g;
+			if (!grainsIndexed)
+			{
+				var color=parseFloat(getNodeText(ferm,"COLOR"));
+				grainColors[g]=color;
+				var grav=parseFloat(getNodeText(ferm,"YIELD"));
+				grainGravs[g]=grav;
+				grainDetails[g]=ferm;
+			}
+			}
+		}
+		option=document.createElement('OPTION');
+		option.appendChild(document.createTextNode("----------------Extracts-----------------"));
+		select.appendChild(option);
+		g++;
+		nonmash=g;
+		extracts=g;
+		for (f=0;f<fermentables.length;f++)
+		{
+			var ferm = fermentables[f];
+			if ("Extract"==getNodeText(ferm,"TYPE") )
+			{
+			var grain=getNodeText(ferm,"NAME");
+			var color=getNodeText(ferm,"COLOR");
+			option=document.createElement('OPTION');
+			option.appendChild(document.createTextNode(grain));
+			option.setAttribute('type','sugar');
+			select.appendChild(option);
+			++g;
+			if (!grainsIndexed)
+			{
+				var color=parseFloat(getNodeText(ferm,"COLOR"));
+				grainColors[g]=color;
+				var grav=parseFloat(getNodeText(ferm,"YIELD"));
+				grainGravs[g]=grav;
+				grainDetails[g]=ferm;
+			}
+			}
+		}
+		option=document.createElement('OPTION');
+		option.appendChild(document.createTextNode("---------------Dry Extracts---------------"));
+		select.appendChild(option);
+		g++;
+		dryextracts=g;
+		for (f=0;f<fermentables.length;f++)
+		{
+			var ferm = fermentables[f];
+			if ( "Dry Extract"==getNodeText(ferm,"TYPE") )
+			{
+			var grain=getNodeText(ferm,"NAME");
+			var color=getNodeText(ferm,"COLOR");
+			option=document.createElement('OPTION');
+			option.appendChild(document.createTextNode(grain));
+			option.setAttribute('type','sugar');
+			select.appendChild(option);
+			++g;
+			if (!grainsIndexed)
+			{
+				var color=parseFloat(getNodeText(ferm,"COLOR"));
+				grainColors[g]=color;
+				var grav=parseFloat(getNodeText(ferm,"YIELD"));
+				grainGravs[g]=grav;
+				grainDetails[g]=ferm;
+			}
+			}
+		}
+		option=document.createElement('OPTION');
+		option.appendChild(document.createTextNode("-----------------Sugars------------------"));
+		select.appendChild(option);
+		g++;
+		sugars=g;
+		for (f=0;f<fermentables.length;f++)
+		{
+			var ferm = fermentables[f];
+			if ( "Sugar"==getNodeText(ferm,"TYPE"))
+			{
+			var grain=getNodeText(ferm,"NAME");
+			var color=getNodeText(ferm,"COLOR");
+			option=document.createElement('OPTION');
+			option.appendChild(document.createTextNode(grain));
+			option.setAttribute('type','sugar');
+			select.appendChild(option);
+			++g;
+			if (!grainsIndexed)
+			{
+				var color=parseFloat(getNodeText(ferm,"COLOR"));
+				grainColors[g]=color;
+				var grav=parseFloat(getNodeText(ferm,"YIELD"));
+				grainGravs[g]=grav;
+				grainDetails[g]=ferm;
+			}
+			}
+		}
+		var textbox = document.createElement('INPUT');
+		textbox.setAttribute("type","number");
+		textbox.setAttribute("style","font-size:x-small;width:"+parseInt(width*.12)+"px");
+		textbox.setAttribute("id","grain-"+graincount+"-weight");
+		textbox.setAttribute("size","3");
+		//textbox.setAttribute("value","0");
+		textbox.setAttribute('onChange','updateAll();');
+		var tr = addRow(grains)
+		tr.setAttribute("id","row"+graincount);
+		var td = addCell(tr);
+		td.appendChild(textbox);
+
+		td = addCell(tr);
+		textbox = document.createElement('INPUT');
+		textbox.setAttribute("type","number");
+		textbox.setAttribute("style","font-size:x-small;width:"+parseInt(width*.12)+"px");
+		textbox.setAttribute("id","grain-"+graincount+"-ounces");
+		//textbox.setAttribute("value","0");
+		textbox.setAttribute("onChange","updatePg("+graincount+")");
+		textbox.setAttribute("size","3");
+		td.appendChild(textbox);
+
+		td = addCell(tr);
+		td.appendChild(select);
+		grains.appendChild(tr);
+
+		td = addCell(tr);
+		textbox = document.createElement('INPUT');
+		textbox.setAttribute("type","number");
+		textbox.setAttribute("style","font-size:x-small;width:"+parseInt(width*.12)+"px");
+		textbox.setAttribute("id","grain-"+graincount+"-pg");
+		textbox.setAttribute("value","0");
+		textbox.setAttribute("onChange","updatePg("+graincount+")");
+		textbox.setAttribute("size","3");
+		td.appendChild(textbox);
+
+		td = addCell(tr);
+		textbox = document.createElement('INPUT');
+		textbox.setAttribute("type","number");
+		textbox.setAttribute("style","font-size:x-small;width:"+parseInt(width*.12)+"px");
+		textbox.setAttribute("id","grain-"+graincount+"-color");
+		textbox.setAttribute("value","0");
+		textbox.setAttribute("onChange","updateColor("+graincount+")");
+		textbox.setAttribute("size","3");
+		td.appendChild(textbox);
+		//textbox.setAttribute('onChange','updateGrainWeight();');
+
+		if (graincount>0)
+		{
+			//var a = addItemToNewCell(tr,"button");
+			//a.appendChild(document.createTextNode("Delete"));
+			//a.setAttribute("onClick","deleteGrainRow();");
+		}
+		graincount++;
+		grainsIndexed=true;
+		if(!loading)
+		updateAll();
+	}
+
+	function deleteGrainRow()
+	{
+		if (graincount>1)
+		{
+			--graincount;
+			var tr = getItem("row"+graincount);
+			var grains = getItem("grain-tbl");
+			grains.removeChild(tr);
+		}
+		if(!loading)
+		updateAll();
+	}
+
+	function updateGrainWeight()
+	{
+		weight=0;
+		for (g=graincount-1;g>=0;g--)
+		{
+			if(getItem("grain-"+g+"-type").selectedIndex < nonmash)
+			{
+				weight+=getNum("grain-"+g+"-weight");
+				weight+=(getNum("grain-"+g+"-ounces")/16);
+			}
+		}
+		getItem("strike-qts").value=(weight*ratio);		
+		calcGrainNumbers();
+		updateInfusion();
+	}
+
+	function calcGrainNumbers()
+	{
+		//Utilization = f(G) x f(T) where: 
+		beerxml+='<FERMENTABLES>\n';
+		var totalPoints = 0;
+		var boilPoints = 0;
+		var totalPostGrav=0;
+		mcuTotal=0;
+		var text = "<table style='font-size:x-small;'><tr><th>Grain<th>Lbs<th>%<th>Points<th>SRM";
+		var totalWeight=0;
+		var batch = parseFloat(getItem("batch-size").value);
+		var preboil = parseFloat(getItem("pre-boil").value);
+		efficiency = parseFloat(getItem("efficiency").value);
+		var grainrows=0;
+		for (var g=0;g<graincount;g++)
+		{
+			var weight = getNum("grain-"+g+"-weight");
+			var ounces = (getNum("grain-"+g+"-ounces")/16);
+			totalWeight+=weight+ounces;
+		}
+		for (var g=0;g<graincount;g++)
+		{
+			var grain = getItem("grain-"+g+"-type");
+			if(grain.selectedIndex!=0)
+			{	
+			var type="Grain";
+			if (grain.selectedIndex>sugars)
+				type="Sugar";
+			else if (grain.selectedIndex>dryextracts)
+				type="Dry Extract";
+			else if (grain.selectedIndex>extracts)
+				type="Extract";
+
+			var grainYield = parseFloat(grainGravs[grain.selectedIndex]);
+			var weight = getNum("grain-"+g+"-weight");
+			if(getItem("grain-"+g+"-type").selectedIndex < nonmash)
+				weight += (getNum("grain-"+g+"-ounces")/16);
+			var color = parseFloat(grainColors[grain.selectedIndex]);
+			var xmlcolor = color;
+			getItem("grain-"+g+"-color").value=color;
+			color=color*weight/batch;
+			mcuTotal+=Math.round(color);			
+			//Moyer Method
+			color = Math.round((1.4922 * Math.pow(color,0.6859))*100)/100;			
+			//Daniel's "Beer Color Demystified"
+			//color = (color * 0.2) + 8.4;
+			getItem("grain-"+g+"-pg").value=Math.round(0.46*grainYield);
+			var eff = efficiency;
+			if(grain.selectedIndex>extracts)
+				eff=100;
+			var ppg = ((46 * grainYield * eff)/10000);
+			//GRAV POINTS = PPG * weight / 6
+			var points = weight * ppg / preboil;
+			if(getItem("grain-"+g+"-type").selectedIndex < nonmash)
+				boilPoints += points;
+			
+			totalPoints += points;
+			
+			points = (points * preboil) / batch;
+			var percent = (Math.round(weight/totalWeight*10000))/100
+			if (percent == NaN)
+				percent = 0;
+			if(!(percent > 0))
+				percent=0;
+			text += "<tr><td>"+grain.value+"<td>"+weight+"<td>"+percent+"<td>"+Math.round(points)+"<td>"+color;
+			++grainrows;
+			var kilos = weight * 0.453592;
+			
+			beerxml+="<FERMENTABLE><NAME>"+grain.value+"</NAME><TYPE>"+type+"</TYPE><VERSION>1</VERSION><AMOUNT>"+kilos+"</AMOUNT><YIELD>"+grainYield+"</YIELD><COLOR>"+xmlcolor+"</COLOR></FERMENTABLE>\n";
+			}
+		}
+		
+		var postBoilGrav = Math.round((totalPoints * preboil) / batch);
+		var totalSRM = Math.round((1.4922 * Math.pow(mcuTotal,0.6859))*100)/100;
+		
+		var results = getItem('grain-results');
+		while (results.hasChildNodes()) {
+		    results.removeChild(results.lastChild);
+		}
+		totalPoints = Math.round(totalPoints);
+		finalGrav = Math.round((boilPoints* preboil) / batch);
+		totalPostGrav = Math.round(boilPoints);
+		boilGrav=Math.round(boilPoints);
+		//finalGrav=Math.round(postBoilGrav);
+		//var vTotalWater = (vBatch+vTrub)/(1-(vBoilTime*(vBoiloff/100)))) + vEquipment + (vGrain * vAbsorptionRate)
+		
+		//totalWater = Math.round(100*((batch/(1-(1*(preboil-batch)/100))) + equipLoss + (totalWeight * grainAbsorption)))/100;
+		totalWater = Math.round(100*( (tunLoss/2) + preboil + (totalWeight * grainAbsorption)))/100;
+		var attenuation=getItem('attenuation').value;
+		var fg = postBoilGrav * (100-attenuation) / 100;
+		var abv = Math.round(100*(postBoilGrav-fg) * 0.132)/100;
+		
+		/*results.appendChild(document.createTextNode("Pre-boil gravity points: "+totalPoints));
+		results.appendChild(document.createElement("br"));
+		results.appendChild(document.createTextNode("Post-boil gravity points: "+postBoilGrav));*/
+		if(grainrows>0)
+		{
+		var bg="#FFFFFF"
+		if(totalSRM>0)
+		{
+			var srm1=parseInt(totalSRM*10);
+			if (srm1>300)
+				srm1=310;
+			bg = srm[srm1];
+		}
+		gu = postBoilGrav;
+		text += "<tr><td>Total/OG<td>"+totalWeight+"<td><td>"+postBoilGrav+"<td>"+totalSRM+"<tr><td>Final Gravity<td><td><td>"+fg+"<tr><td>ABV<td><td>"+abv+"%<tr><td colspan=5 style='background-color:"+bg+";'>\u00A0</table>";
+		results.innerHTML=text;
+		}
+		beerxml+='</FERMENTABLES>\n';
+		beerxml+="<OG>"+postBoilGrav+"</OG><FG>"+fg+"</FG>\n";
+		
+		//innerHTML=beerxml;
+	}
+
+	function updatePg(id)
+	{
+		var grain = getItem("grain-"+id+"-type");
+		grainGravs[grain.selectedIndex]=getItem("grain-"+id+"-pg").value/0.46;
+		if(!loading)
+		updateAll();
+	}
+
+	function updateColor(id)
+	{
+		var grain = getItem("grain-"+id+"-type");
+		grainColors[grain.selectedIndex]=getItem("grain-"+id+"-color").value;
+		if(!loading)
+		updateAll();
+	}
+
+	function updateInfusion()
+	{
+		var grainTemp = parseFloat(getItem('grain-temp').value);       
+		var time = parseFloat(getItem('grain-time').value);       
+		var mashTemp = parseFloat(getItem('mash-temp').value);	
+		ratio = parseFloat(getItem('ratio').value);	
+	
+		//Strike Water Temperature Tw = (.2/r)(T2 - T1) + T2
+
+		var strikeTemp = Math.round(((0.2 / ratio) * (mashTemp - grainTemp) + mashTemp));
+
+		getItem('strike-temp').value=strikeTemp;
+		getItem("strike-qts").value=(Math.round(weight*ratio*100)/100);
+		var results = getItem('mash-results');
+		var text = "<table style='font-size:x-small;'><tr><th colspan=2>Batch Settings"+
+			"<tr><td>Batch size:<td>"+getItem("batch-size").value+" Gal"+
+			"<tr><td>Pre-boil Volume:<td>"+getItem("pre-boil").value+" Gal"+
+			"<tr><td>Efficiency:<td>"+efficiency+"%"+
+			"<tr><td>Pre-Boil Gravity Units:<td>"+boilGrav+
+			"<tr><td>Post-Boil Gravity Units*:<td>"+finalGrav+
+			"<tr><td style='font-size=x-small;'>&nbsp;&nbsp;*minus extracts and sugars"+
+			"<tr><th colspan=2>Initial Infusion"+
+			"<tr><td>Step Time:<td>"+time+" min"+
+			"<tr><td>Mash Temp:<td>"+mashTemp+"\u00B0 F"+
+			"<tr><td>Strike Water:<td>"+Math.round(weight*ratio*100)/100+" Qts"+
+			"<tr><td>Strike Water Temp:<td>"+strikeTemp+"\u00B0 F";
+			
+		var liters = (weight*ratio)*0.946353;
+		var temp = (mashTemp-32)/1.8;
+		var endtemp = temp;
+		if (getItem('step-0-loss')!=null)
+		{
+			var tempLoss=parseFloat(getItem('step-0-loss').value);
+			endtemp = (mashTemp - tempLoss-32)/1.8;
+		}
+		
+		beerxml+="<MASH><VERSION>1</VERSION><NAME>Single-Multi-Step Mash</NAME><GRAIN_TEMP>"+getItem('grain-temp').value+"</GRAIN_TEMP><MASH_STEPS>\n";
+		beerxml+="<MASH_STEP><NAME>Initial Infusion</NAME><VERSION>1</VERSION><TYPE>Infusion</TYPE><INFUSE_AMOUNT>"+liters+"</INFUSE_AMOUNT><STEP_TEMP>"+ temp +"</STEP_TEMP><STEP_TIME>"+time+"</STEP_TIME><END_TEMP>"+endtemp+"</END_TEMP></MASH_STEP>\n";
+		text+=updateStepInfusions();
+
+		var spargeWater = Math.round( (totalWater*4-getWaterVolume(steps))*100)/100;
+		beerxml+="</MASH_STEPS></MASH>\n";
+
+		text+="<tr><th colspan=2>Sparge";
+		text+="<tr><td>Sparge Water:<td>"+spargeWater+" Qts";
+		text+="<tr><td>Sparge Water Temp:<td>170\u00B0 F<td>";
+		text+="</table>";
+		results.innerHTML=text;
+		beerxml+="<BATCH_SIZE>"+getItem("batch-size").value+"</BATCH_SIZE><BOIL_SIZE>"+getItem("pre-boil").value+"</BOIL_SIZE><BOIL_TIME>"+getItem("boil-time").value+"</BOIL_TIME><EFFICIENCY>"+getItem("efficiency").value+"</EFFICIENCY>"
+	}
+
+	function addStepInfusion()
+	{
+		var stepdiv = getItem('stepInfusions');
+		var stepTbl = document.createElement('TABLE');
+		stepTbl.setAttribute('id','step'+steps);
+		stepdiv.appendChild(stepTbl);
+
+		var tr = addRow(stepTbl);
+		addItemToNewCell(tr,'br');
+
+		tr = addRow(stepTbl);	       
+		var td = addHeader(tr);
+		var text = document.createTextNode('Step '+(steps+1)+' (Infusion) ');
+		td.setAttribute("style","font-weight:bold;");
+		td.appendChild(text);
+
+		tr = addRow(stepTbl);
+		addTextToNewCell(tr,'Temp Loss (\u00B0 F):');
+		var loss = addItemToNewCell(tr,'input');
+		loss.setAttribute('onChange','updateAll();');
+		loss.setAttribute("size","5");
+		loss.setAttribute("id","step-"+steps+"-loss");
+		loss.setAttribute("value","0");
+		loss.setAttribute("input","number");
+
+		tr = addRow(stepTbl);
+		addTextToNewCell(tr,'Target Temp (\u00B0 F):');
+		var temp = addItemToNewCell(tr,'input');
+		temp.setAttribute("input","number");
+		temp.setAttribute('onChange','updateAll();');
+		temp.setAttribute("size","5");
+		temp.setAttribute("id","step-"+steps+"-temp");
+
+		tr = addRow(stepTbl);
+                addTextToNewCell(tr,'Step time (min): ');
+                var time = addItemToNewCell(tr,'input');
+                time.setAttribute("size","5");
+		time.setAttribute('onChange','updateAll();');
+                time.setAttribute("id","step-"+steps+"-time");
+                time.setAttribute("input","number");
+
+		tr = addRow(stepTbl);
+		addTextToNewCell(tr,'Qts of boiling water: ');
+		var amount = addItemToNewCell(tr,'input');
+		amount.setAttribute('readonly','true');
+		amount.setAttribute("size","5");
+		amount.setAttribute("id","step-"+steps+"-amount");
+		amount.setAttribute("input","number");
+
+		
+		++steps;
+		if(!loading)
+		updateAll();
+	}
+
+	function addHeatedStep()
+	{
+		var stepdiv = getItem('stepInfusions');
+		var stepTbl = document.createElement('TABLE');
+		stepTbl.setAttribute('id','step'+steps);
+		stepdiv.appendChild(stepTbl);
+
+		var tr = addRow(stepTbl);
+		addItemToNewCell(tr,'br');
+
+		tr = addRow(stepTbl);	       
+		var td = addHeader(tr);
+		var text = document.createTextNode('Step '+(steps+1)+' (Heated)');
+		td.setAttribute("style","font-weight:bold;");
+		td.appendChild(text);
+
+		/*tr = addRow(stepTbl);
+		addTextToNewCell(tr,'Temp Loss (\u00B0 F):');
+		var loss = addItemToNewCell(tr,'input');
+		loss.setAttribute('onChange','updateAll();');
+		loss.setAttribute("size","5");
+		loss.setAttribute("id","step-"+steps+"-loss");
+		loss.setAttribute("value","0");
+		loss.setAttribute("input","number");*/
+
+		tr = addRow(stepTbl);
+		addTextToNewCell(tr,'Target Temp (\u00B0 F):');
+		var temp = addItemToNewCell(tr,'input');
+		temp.setAttribute("input","number");
+		temp.setAttribute('onChange','updateAll();');
+		temp.setAttribute("size","5");
+		temp.setAttribute("id","step-"+steps+"-temp");
+
+		tr = addRow(stepTbl);
+                addTextToNewCell(tr,'Step time (min): ');
+                var time = addItemToNewCell(tr,'input');
+                time.setAttribute("size","5");
+		time.setAttribute('onChange','updateAll();');
+                time.setAttribute("id","step-"+steps+"-time");
+                time.setAttribute("input","number");
+
+		var heated = addItemToNewCell(tr,'input');
+		heated.setAttribute("id","step-"+steps+"-heated");
+		heated.setAttribute("input","hidden");
+		heated.setAttribute("type","hidden");
+
+		/*tr = addRow(stepTbl);
+		addTextToNewCell(tr,'Qts of boiling water: ');
+		var amount = addItemToNewCell(tr,'input');
+		amount.setAttribute('readonly','true');
+		amount.setAttribute("size","5");
+		amount.setAttribute("id","step-"+steps+"-amount");
+		amount.setAttribute("input","number");*/
+
+		
+		++steps;
+		if(!loading)
+		updateAll();
+	}
+
+
+	function addDecoctionStep()
+	{
+		var stepdiv = getItem('stepInfusions');
+		var stepTbl = document.createElement('TABLE');
+		stepTbl.setAttribute('id','step'+steps);
+		stepdiv.appendChild(stepTbl);
+
+		var tr = addRow(stepTbl);
+		addItemToNewCell(tr,'br');
+
+		tr = addRow(stepTbl);	       
+		var td = addHeader(tr);
+		var text = document.createTextNode('Step '+(steps+1)+' (Decoction)');
+		td.setAttribute("style","font-weight:bold;");
+		td.appendChild(text);
+
+		/*tr = addRow(stepTbl);
+		addTextToNewCell(tr,'Temp Loss (\u00B0 F):');
+		var loss = addItemToNewCell(tr,'input');
+		loss.setAttribute('onChange','updateAll();');
+		loss.setAttribute("size","5");
+		loss.setAttribute("id","step-"+steps+"-loss");
+		loss.setAttribute("value","0");
+		loss.setAttribute("input","number");*/
+
+		tr = addRow(stepTbl);
+		addTextToNewCell(tr,'Target Temp (\u00B0 F):');
+		var temp = addItemToNewCell(tr,'input');
+		temp.setAttribute("input","number");
+		temp.setAttribute('onChange','updateAll();');
+		temp.setAttribute("size","5");
+		temp.setAttribute("id","step-"+steps+"-temp");
+
+		tr = addRow(stepTbl);
+                addTextToNewCell(tr,'Step time (min): ');
+                var time = addItemToNewCell(tr,'input');
+                time.setAttribute("size","5");
+		time.setAttribute('onChange','updateAll();');
+                time.setAttribute("id","step-"+steps+"-time");
+                time.setAttribute("input","number");
+
+		tr = addRow(stepTbl);
+		addTextToNewCell(tr,'Qts to decoct: ');
+		var amount = addItemToNewCell(tr,'input');
+		amount.setAttribute('readonly','true');
+		amount.setAttribute("size","5");
+		amount.setAttribute("id","step-"+steps+"-amount");
+		amount.setAttribute("input","number");
+
+		var decoct = addItemToNewCell(tr,'input');
+		decoct.setAttribute("id","step-"+steps+"-decoct");
+		decoct.setAttribute("type","hidden");
+
+		
+		++steps;
+		if(!loading)
+		updateAll();
+	}
+
+
+
+	function deleteStepInfusion()
+	{
+		if(steps>0)
+		{
+			--steps;
+			var tbl = getItem("step"+steps);
+			var stepdiv = getItem("stepInfusions");
+			stepdiv.removeChild(tbl);
+		}
+	}
+
+	function getWaterVolume(id)
+	{
+		var water=0;
+		for (s=id-1;s>=0;s--)
+		{
+			if(getItem('step-'+s+'-heated')==null && getItem('step-'+s+'-decoct')==null)
+				water+=parseFloat(getItem("step-"+s+"-amount").value);
+		}
+		water+=parseFloat(weight * ratio);
+		return water;
+	}
+
+	function updateStepInfusion(id)
+	{
+		//Wa = (T2 - T1)(.2G + Wm)/(Tw - T2)
+
+		if(getItem('step-'+id+'-decoct')!=null) //this is an decoction step
+		{
+			var mashTemp = parseFloat(getItem('step-'+id+'-temp').value);
+			var mashTime = parseFloat(getItem('step-'+id+'-time').value);
+			var extraDecoct = parseFloat(getItem('extra-decoct').value);
+			var water = getWaterVolume(id);
+			if (id==0)
+				startTemp=parseFloat(getItem("mash-temp").value);
+			else
+				startTemp=parseFloat(getItem("step-"+(id-1)+"-temp").value);
+			var decoct = ( 1 + (extraDecoct / 100) ) * (water+weight) * (mashTemp - startTemp) / (212 - startTemp);
+			decoct = Math.round(decoct*100)/100;
+			var temp = (mashTemp-32)/1.8;
+			var nextId=parseInt(id+1);
+			getItem('step-'+id+'-amount').value=decoct;
+			var text = "<tr><th colspan=2>Step "+(parseInt(id)+1)+" (Decoction)"+
+			"<tr><td>Start Temp:<td>"+startTemp+"\u00B0 F"+
+			"<tr><td>Target Temp:<td>"+mashTemp+"\u00B0 F"+
+			"<tr><td>Step time:<td>"+mashTime+" min"+
+			"<tr><td>Boiling mash:<td>"+decoct+" Qts";
+			beerxml+="<MASH_STEP><NAME>Step "+nextId+" - Decoction</NAME><VERSION>1</VERSION><TYPE>Decoction</TYPE><STEP_TEMP>"+temp+"</STEP_TEMP><STEP_TIME>"+mashTime+"</STEP_TIME></MASH_STEP>\n";
+			return text;
+			
+		}
+		else if(getItem('step-'+id+'-heated')==null) //this is an infusion step
+		{
+
+		var tempLoss = parseFloat(getItem('step-'+id+'-loss').value);	
+		var mashTemp = parseFloat(getItem('step-'+id+'-temp').value);
+		var mashTime = parseFloat(getItem('step-'+id+'-time').value);
+		var amount = getItem('step-'+id+'-amount');
+		var startTemp=0;		
+		if (id==0)
+			startTemp=parseFloat(getItem("mash-temp").value);
+		else
+			startTemp=parseFloat(getItem("step-"+(id-1)+"-temp").value);		
+		startTemp=startTemp-tempLoss;
+		var qts = (mashTemp-startTemp) * (0.2*weight + getWaterVolume(id)) / (210-mashTemp);
+		qts=Math.round(qts*100)/100
+		amount.value=qts;
+		
+		var text = "<tr><th colspan=2>Step "+(parseInt(id)+1)+"(Infusion)"
+			"<tr><td>Start Temp:<td>"+startTemp+"\u00B0 F"+
+			"<tr><td>Target Temp:<td>"+mashTemp+"\u00B0 F"+
+			"<tr><td>Boiling Water Added:<td>"+qts+" Qts";
+			"<tr><td>Step time:<td>"+mashTime+" min";
+		var liters = qts*0.946353;
+		var temp = (mashTemp-32)/1.8;
+		var endtemp = temp;
+		var nextId=parseInt(id+1);
+                if (getItem('step-'+nextId+'-loss')!=null)
+                {
+			var loss = parseFloat(getItem('step-'+nextId+'-loss').value);
+                        endtemp = (mashTemp - loss-32)/1.8;
+                }
+
+		beerxml+="<MASH_STEP><NAME>Step "+nextId+"- Infusion</NAME><VERSION>1</VERSION><TYPE>Infusion</TYPE><INFUSE_AMOUNT>"+liters+"</INFUSE_AMOUNT><STEP_TEMP>"+temp+"</STEP_TEMP><STEP_TIME>"+mashTime+"</STEP_TIME><END_TEMP>"+endtemp+"</END_TEMP></MASH_STEP>\n";
+		return text;
+
+		}//this is a heated step
+		else
+		{
+			var mashTemp = parseFloat(getItem('step-'+id+'-temp').value);
+			var mashTime = parseFloat(getItem('step-'+id+'-time').value);
+			var temp = (mashTemp-32)/1.8;
+			var nextId=parseInt(id+1);
+			var text = "<tr><th colspan=2>Step "+(parseInt(id)+1)+" (Heated)"+
+			"<tr><td>Target Temp:<td>"+mashTemp+"\u00B0 F"+
+			"<tr><td>Step time:<td>"+mashTime+" min";
+			beerxml+="<MASH_STEP><NAME>Step "+nextId+" - Temperature</NAME><VERSION>1</VERSION><TYPE>Temperature</TYPE><STEP_TEMP>"+temp+"</STEP_TEMP><STEP_TIME>"+mashTime+"</STEP_TIME></MASH_STEP>\n";
+			return text;
+		}//end of heated step
+		
+	}
+
+	function updateStepInfusions()
+	{
+		var water=0;
+		var text1="";
+		for (var s=0;s<steps;s++)
+		{
+			text1+=updateStepInfusion(s);
+		}
+		return text1;
+	}
+
+	function addHopList()
+	{
+		var select = document.createElement('SELECT');
+		var width=screen.width;
+		if(width>640)
+			width=640;
+		select.setAttribute('style','font-size:x-small;width:'+parseInt(width*.4)+'px');
+		select.setAttribute("id","hop-"+hopcount+"-type");
+		select.setAttribute("onChange","updateHopAlphas();");		
+	
+		var hopTbl = getItem("hop-tbl");
+		var hops = xml.getElementsByTagName("HOP");
+		var option=document.createElement('OPTION');
+		option.appendChild(document.createTextNode("Select Hop"));
+		select.appendChild(option);
+		for (h=0;h<hops.length;h++)
+		{
+			var hop = hops[h];
+			var name=getNodeText(hop,"NAME");
+			var alpha=parseFloat(getNodeText(hop,"ALPHA"));
+			option=document.createElement('OPTION');
+			option.appendChild(document.createTextNode(name));
+			select.appendChild(option);
+			if (!hopIndexed)
+			{
+				hopAlphas[h]=alpha;
+			}	
+			
+		}
+		var tr = addRow(hopTbl)
+		tr.setAttribute("id","row"+hopcount);		
+		var td = addCell(tr);
+
+		var textbox = document.createElement('INPUT');
+		textbox.setAttribute("style","font-size:x-small;width:"+parseInt(width*.12)+"px");
+		textbox.setAttribute("type","number");
+		textbox.setAttribute("id","hop-"+hopcount+"-weight");
+		textbox.setAttribute("size","4");
+		//textbox.setAttribute("value","0");
+		textbox.setAttribute('onFocus','updateHopAlphas();');
+		//textbox.setAttribute('onClick','if(this.value=="0) this.value="";');
+		td.appendChild(textbox);
+
+		td = addCell(tr);
+		textbox = document.createElement('INPUT');
+		textbox.setAttribute("style","font-size:x-small;width:"+parseInt(width*.12)+"px");
+		textbox.setAttribute("type","number");
+		textbox.setAttribute("id","hop-"+hopcount+"-time");
+		textbox.setAttribute("size","4");
+		//textbox.setAttribute("value","0");
+		textbox.setAttribute('onChange','updateAll();');
+		td.appendChild(textbox);
+
+		td = addCell(tr);
+                textbox = document.createElement('INPUT');
+		textbox.setAttribute("type","checkbox");
+		textbox.setAttribute("style","font-size:x-small;width:"+parseInt(width*.12)+"px");
+		textbox.setAttribute("id","hop-"+hopcount+"-dry");
+		textbox.setAttribute('onChange','updateAll();');
+                td.appendChild(textbox);
+
+
+		td = addCell(tr);
+		td.appendChild(select);
+		hopTbl.appendChild(tr);
+		td = addCell(tr);
+
+		textbox = document.createElement('INPUT');
+		textbox.setAttribute("style","font-size:x-small;width:"+parseInt(width*.12)+"px");
+		textbox.setAttribute("type","number");
+		textbox.setAttribute("id","hop-"+hopcount+"-alpha");
+		textbox.setAttribute("size","4");
+		//textbox.setAttribute("value","0");
+		textbox.setAttribute('onChange','setAlpha('+hopcount+');');
+		td.appendChild(textbox);
+
+		hopcount++;
+		hopIndexed=true;
+		//updateInfusion();
+	}
+
+	function deleteHopRow()
+	{
+		if (hopcount>1)
+		{
+			--hopcount;
+			//var tr = getItem("row"+hopcount);
+			var hops = getItem("hop-tbl");
+			var tr = hops.rows[hops.rows.length-1];
+			hops.removeChild(tr);
+		}
+		if(!loading)
+		updateAll();
+	}
+
+	function updateHopAlphas()
+	{
+		beerxml+="<HOPS>\n";
+		var totalIbu = 0;
+		var text = "<table style='font-size:x-small;'><tr><th>Hop Name<th>Alpha<th>Oz<th>Min<th>IBU";
+		var results = getItem('hop-results');
+		var hoprows=0;
+		for (h=0;h<hopcount;h++)
+		{
+			var hop = getItem("hop-"+h+"-type");
+			if(hop.selectedIndex!=0)
+			{
+			var name = getItem("hop-"+h+"-type").value;
+			var alpha = hopAlphas[hop.selectedIndex-1];
+			var weight = getItem("hop-"+h+"-weight").value;
+			var kilos = weight * 0.453592 / 16;
+			var time = getItem("hop-"+h+"-time").value;
+			var dry = getItem("hop-"+h+"-dry").checked;
+		
+			
+			getItem("hop-"+h+"-alpha").value=parseFloat(Math.round(alpha*100)/100);
+			//AAU = Weight (oz) x % Alpha Acids (whole number)
+			//IBU = AAU x U x 75 / Vrecipe
+			//f(G) = 1.65 x 0.000125^(Gb - 1) 
+			//f(T) = [1 - e^(-0.04 x T)] / 4.15
+			//Gb = boil gravity
+			
+			var aau = (weight * alpha);
+			var fg = 1.65 * Math.pow(0.000125,(parseFloat(boilGrav)/1000));
+			var ft = (1 - Math.pow(Math.E,(time * -0.04))) / 4.15;
+			var util = fg * ft;
+			var batch = parseFloat(getItem("batch-size").value);
+			var ibu = ( aau * util * 74 )/batch; 
+			if (dry)
+				ibu=0;
+			totalIbu+=ibu;
+			ibu = Math.round(ibu);
+			var timetext=time;
+			var use="Boil";
+			if (dry)
+			{
+				ibu="DH";
+				use="Dry Hop";
+			}
+			text+="<tr><td>"+name+"<td>"+alpha+"%<td>"+weight+"<td>"+timetext+"<td>"+ibu+"</tr>";
+			++hoprows;
+			beerxml+="<HOP><NAME>"+hop.value+"</NAME><VERSION>1</VERSION><ALPHA>"+alpha+"</ALPHA><AMOUNT>"+kilos+"</AMOUNT><USE>"+use+"</USE><TIME>"+time+"</TIME></HOP>\n";
+			}
+		}
+		totalIbu = Math.round(totalIbu);
+		if(hoprows>0)
+		{
+		text+="<tr><td colspan=4>Total<td>"+totalIbu;
+		var balance = Math.round(100*totalIbu/gu)/100
+		text+="<tr><td>BU/GU<td>"+balance+"<td colspan=3>"+getBalanceName(totalIbu,gu)+"</table>";
+		results.innerHTML=text;
+		}
+		/*while (results.hasChildNodes()) {
+		    results.removeChild(results.lastChild);
+		}
+		results.appendChild(document.createTextNode("Total IBUs: "+totalIbu));*/
+		beerxml+="</HOPS>";
+	}
+
+	function setAlpha(id,val)
+	{
+		var h = getItem("hop-"+id+"-type").selectedIndex-1;
+		hopAlphas[h] = getItem("hop-"+id+"-alpha").value;
+		if(!loading)
+		updateAll();
+	}
+
+
+	function getBalanceName(bu,gu)
+	{
+		var extramalty=3.846*bu-5.768;
+		var slightlymalty=2.830*bu-1.885;
+		var balanced=2.381*bu-3.572;
+		var slightlyhoppy=1.948*bu-2.272;
+		var extrahoppy=1.667*bu-4.173;
+		var veryhoppy=1.29*bu-2.428;
+		if (gu > extramalty)
+			return "overly malty";
+		else if (gu > slightlymalty)
+			return "extra malty";
+		else if (gu > balanced)
+			return "slightly malty";
+		else if (gu > slightlyhoppy)
+			return "balanced";
+		else if (gu > extrahoppy)
+			return "slightly hoppy";
+		else if (gu > veryhoppy)
+			return "extra hoppy";
+		else 
+			return "overly hoppy";
+	}
+
+	function formatForXml(string)
+	{
+		var ret= string.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace("'","&apos;").replace("\"","&quot;");
+
+		return ret;
+	
+	}
+
+	function updateAll()
+	{
+		beerxml="<RECIPE>";
+		beerxml+="<NAME>"+getItem('recipe-name').value+"</NAME>";
+		beerxml+="<TYPE>All Grain</TYPE>";
+		beerxml+="<NOTES>"+formatForXml(getItem('notes').value)+"</NOTES>";
+		updateGrainWeight();
+		//updateInfusion();
+		updateHopAlphas();
+		beerxml+="<WATERS></WATERS>";
+		beerxml+="</RECIPE>";
+		getItem('beerxml').innerHTML='';
+		//getItem('beerxml').appendChild(document.createTextNode(beerxml));
+		if((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i))) 
+			getItem('download-link').href="data:application/octet-stream,"+beerxml;
+		else
+			getItem('download-link').href="data:application/xml,"+beerxml;
+		//getItem('download-link').href="mailto:?subject=BeerXML&body=,"+beerxml;
+		
+	}
+
+	function shareRecipe()
+	{
+		var xml = beerxml;
+		var name = getItem('recipe-name').value;
+		var key = getData("xmlkey")+"__"+name;
+		saveSharedXmlToServer(key,xml);
+		
+	}
+
+	function storeData(key,value)
+	{
+		if(typeof(Storage)!=="undefined")
+		{
+			localStorage.setItem(key,value);
+		}
+	}
+
+	function getData(key)
+	{
+		if(typeof(Storage)!=="undefined")
+                {
+                        return localStorage.getItem(key);
+                }
+	}
+
+	function store()
+	{
+		var name = getItem('recipe-name').value;
+		if (name.length<2 & !sync)
+		{
+			alert('Please enter a name for your recipe.');
+		}
+		else
+		{
+		if(name.length>=2)
+		{
+		currentRecipe=name;
+		updateAll();
+		storeData('beerxml-'+name,beerxml);
+		}
+		if(sync)
+			saveToServer();
+		
+		else
+		{
+		clearSavedRecipeList();
+		listSavedRecipes();
+		}
+		}
+	}
+
+	function save()
+	{
+		var name = getItem('recipe-name').value;
+		if (name.length<2)
+		{
+			alert('Please enter a name for your recipe.');
+		}
+		else
+		{
+		updateAll();
+		storeData('beerxml-'+name,beerxml);
+		}
+		
+		clearSavedRecipeList();
+		listSavedRecipes();
+	}
+
+
+	function load(name)
+	{
+		loadRecipes(getData('beerxml-'+name));
+	}
+
+	function setItem(name,value)
+	{
+		getItem(name).value=value;
+	}
+
+	function deleteRecipe()
+	{	
+		var name = getItem('recipe-name').value;
+		if(typeof(Storage)!=="undefined")
+		{
+		if(confirm('Are you sure you want to delete the recipe '+name))
+		{
+			localStorage.setItem('beerxml-'+name,null);
+			localStorage.removeItem('beerxml-'+name);
+			deletedRecipe=name;
+			reload=true;
+			if(sync)
+				saveToServer();		
+			else
+			{
+				clearSavedRecipeList();
+				listSavedRecipes();
+				setToDefault();
+			}
+		}
+		}
+	}
+
+	function start()
+	{
+		if (window.location.toString().indexOf("shared")>0)
+		{
+			getItem('manage').style.display='none';
+			var shareKey = window.location.toString().split("?")[1];
+			shareKey = shareKey.replace("shared=","");
+			//alert(shareKey);
+			//loadShared(shareKey);
+			getItem('notes').readOnly=true;
+			getItem('recipe-name').readOnly=true;
+			loadXmlSharedFromServer(shareKey);
+		}
+		else
+		{
+			key = getData("xmlkey");
+			if(key.length>=8 && loaded==false)
+			{
+				getItem('xmlkey').value=key;
+				getItem('sync').checked=true;
+				loadFromServer();
+			}
+			else
+				listSavedRecipes();
+		}
+	}
+
+	function listSavedRecipes()
+	{
+			
+		var recipename = getItem('recipe-name').value;
+		var recipeselect = getItem('saved-recipes');
+		var option=document.createElement('OPTION');
+		option.appendChild(document.createTextNode("Select Saved Recipes"));
+		recipeselect.appendChild(option);
+		var beerXmlRecipes = new Array();
+		if(typeof(Storage)!=="undefined")
+		{
+			for (r=0;r<localStorage.length;r++)
+			{
+				var name = localStorage.key(r);
+				if (name.indexOf('beerxml-')==0)
+				{
+					
+					var textName = name.replace("beerxml-","");
+					if (textName.length>0)
+					{
+						beerXmlRecipes[beerXmlRecipes.length] = textName;
+					}
+				}
+			}
+		}
+		beerXmlRecipes.sort(function(a,b) {return a > b ? 1 : -1;});
+		for(r=0;r<beerXmlRecipes.length;r++)
+		{
+			var textName = beerXmlRecipes[r];
+			option=document.createElement('OPTION');
+			option.appendChild(document.createTextNode(textName));
+			recipeselect.appendChild(option);
+			if(textName==recipename)
+				option.selected=true;
+		}
+	}
+
+	function xmlAllRecipes(download)
+	{
+		var allXml ="";
+		var recipename = getItem('recipe-name').value;
+		if(typeof(Storage)!=="undefined")
+		{
+			for (rec=0;rec<localStorage.length;rec++)
+			{
+				var name = localStorage.key(rec);
+				if (name.indexOf('beerxml-')==0)
+				{
+					var option=document.createElement('OPTION');
+					var textName = name.replace("beerxml-","");
+					if(deletedRecipe!=textName & textName.length>0)
+					{					
+					//load(textName);
+					
+					allXml+=getData("beerxml-"+textName);
+					}
+				}
+			}
+		}
+		allXml="<DATABASE>"+allXml+"</DATABASE>";
+		if(download)
+		{
+		if((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i))) 
+			getItem('download-all-link').href="data:application/octet-stream,"+allXml;
+		else
+			getItem('download-all-link').href="data:application/xml,"+allXml;
+		}
+		return allXml;
+		
+	}
+	
+	function saveToServer()
+	{
+		if (!loaded)
+		{
+			alert('You must load from server before saving');
+			return;
+		}
+		//save();
+		var key = getItem('xmlkey').value;
+		if (key.length<8)
+		{
+			alert("Please input a key 8 characters or longer.");
+		}
+		else
+		{
+			storeData("xmlkey",key);
+			var xmlAll = xmlAllRecipes(false);
+			saveXmlToServer(key,xmlAll);
+		}
+		
+	}
+
+	function loadFromServer()
+	{
+		var key = getItem('xmlkey').value;
+		
+		if (key.length<8)
+		{
+			key = prompt("Please input a key 8 characters or longer. Remember this key. You will use it to recall your recipes later.","");
+			getItem('xmlkey').value = key;
+			if (key!=null)
+				loadFromServer();
+			//alert("Please input a key 8 characters or longer. Remember this key. You will use it to recall your recipes later.");
+			//getItem('sync').checked=false;
+			
+		}
+		else
+		{
+			storeData("xmlkey",key);
+			loadXmlFromServer(key);
+			loaded=true;
+			sync=true;
+			getItem('sync-div').style.display='inline';
+		}
+		
+	}
+
+
+	function loadShared( shareKey)
+	{
+		//storeData("xmlkey",key);
+		//loadXmlFromServer(key);
+		//loaded=true;
+		//sync=true;
+		//getItem('sync-div').style.display='inline';
+		
+		
+	}
+
+	function clearSavedRecipeList()
+	{
+		var recipeselect = getItem('saved-recipes');
+		while (recipeselect.options.length>0)
+		{
+			recipeselect.remove(recipeselect[0]);
+		}
+	}
+
+	function setToDefault()
+	{
+		var recipeselect = getItem('saved-recipes');
+		var selectedRecipe = recipeselect.selectedIndex;
+		var preload=loading;
+		loading=true;
+		clearPage();
+		var inputs = document.getElementsByTagName("input");
+		for (x=0;x<inputs.length;x++)
+		{
+			if(inputs[x].id!="xmlkey")
+			{
+			inputs[x].value=inputs[x].defaultValue;
+			}
+		}
+		var selects = document.getElementsByTagName("select");
+		for (x=0;x<selects.length;x++)
+		{
+			if(selects[x].id!="xmlkey")
+			{
+			selects[x].selectedIndex=selectedRecipe;
+			}
+		}
+		var textareas = document.getElementsByTagName("textarea");
+		for (x=0;x<textareas.length;x++)
+		{
+			if(textareas[x].id!="xmlkey")
+			{
+			textareas[x].value=inputs[x].defaultValue;
+			}
+		}
+		getItem('grain-results').innerHTML='';
+		getItem('hop-results').innerHTML='';
+		getItem('mash-results').innerHTML='';
+		loading=preload;
+		if(selectedRecipe>0)
+			load(recipeselect.value);
+
+	}
+
+	function clearPage()
+	{
+		while (graincount>1)
+		{
+			deleteGrainRow();
+		}	
+		while(hopcount>1)
+		{
+			deleteHopRow();
+		}
+		while (steps>0)
+		{
+			deleteStepInfusion();
+		}
+	}
+
+	function storeRecipes(strXML)
+	{
+		var doc=null;
+		loading=true;
+		if (window.ActiveXObject) 
+		{ 
+			doc=new ActiveXObject("Microsoft.XMLDOM"); 
+			doc.async="false"; 
+			doc.loadXML(strXML); 
+		} 
+		// code for Mozilla, Firefox, Opera, etc. 
+		else 
+		{ 
+			var parser=new DOMParser(); 
+			doc=parser.parseFromString(strXML,"text/xml"); 
+		}// documentElement always represents the root node  
+		var recipes = doc.getElementsByTagName("RECIPE");
+		for (re=0;re<recipes.length;re++)
+		{
+			var recipe = recipes[re];
+			var name = getNodeText(recipe,"NAME");
+			var xml = '';
+			if (window.ActiveXObject)
+				xml=recipe.xml;		
+			else 
+				xml=(new XMLSerializer()).serializeToString(recipe);
+			//alert(xml);
+			storeData("beerxml-"+name,xml)
+			//loadBeerXml(recipe);
+			//if(recipes.length>1)
+			//save();
+		}
+		loading=false;
+		clearSavedRecipeList();
+		listSavedRecipes();
+	}
+
+
+	function loadRecipes(strXML)
+	{
+		var doc=null;
+		loading=true;
+		if (window.ActiveXObject) 
+		{ 
+			doc=new ActiveXObject("Microsoft.XMLDOM"); 
+			doc.async="false"; 
+			doc.loadXML(strXML); 
+		} 
+		// code for Mozilla, Firefox, Opera, etc. 
+		else 
+		{ 
+			var parser=new DOMParser(); 
+			doc=parser.parseFromString(strXML,"text/xml"); 
+		}// documentElement always represents the root node  
+		var recipes = doc.getElementsByTagName("RECIPE");
+		for (re=0;re<recipes.length;re++)
+		{
+			var recipe = recipes[re];
+			loadBeerXml(recipe);
+			//if(recipes.length>1)
+			//save();
+		}
+		loading=false;
+		clearSavedRecipeList();
+		listSavedRecipes();
+		
+	}
+
+	function loadBeerXml(doc)
+	{	
+
+		loading=true;
+		setItem('recipe-name', getNodeText(doc,"NAME"));
+		setItem('notes', getNodeText(doc,"NOTES"));
+		setItem('batch-size', getNodeText(doc,"BATCH_SIZE"));
+		setItem('pre-boil', getNodeText(doc,"BOIL_SIZE"));
+		setItem('boil-time', getNodeText(doc,"BOIL_TIME"));
+		setItem('efficiency', getNodeText(doc,"EFFICIENCY"));
+		var og = getNodeText(doc,"OG");
+		var fg = getNodeText(doc,"FG");
+		var atten = parseInt(100-(100*fg/og));
+		if( atten == NaN )
+			atten = 75;
+		setItem('attenuation',atten);
+		clearPage();	
+		var docfermentables = doc.getElementsByTagName("FERMENTABLE");
+                for (fe=0;fe<docfermentables.length;fe++)
+		{
+			if (document.getElementById('grain-'+fe+'-type')==null)
+                                addGrainList();
+		}
+		var dochops = doc.getElementsByTagName("HOP");
+		//alert(hops.length);
+		for (ho=0;ho<dochops.length;ho++)
+		{
+			 if (document.getElementById('hop-'+ho+'-type')==null)
+                                addHopList();
+		}
+		var docsteps = doc.getElementsByTagName("MASH_STEP");
+		for (s=0;s<docsteps.length-1;s++)
+		{		
+			var type = getNodeText(docsteps[s+1],"TYPE");
+			if("Temperature"==type)
+			{
+				if (document.getElementById('step-'+s+'-heated')==null)
+	                                addHeatedStep();
+			}
+			else if("Decoction"==type)
+			{
+				if (document.getElementById('step-'+s+'-decoct')==null)
+	                                addDecoctionStep();
+			}
+			else
+			{
+				if (document.getElementById('step-'+s+'-loss')==null)
+        	                        addStepInfusion();
+			}
+		}
+		beerxmldoc=doc;
+		setFields();
+		loading=false;
+	}
+
+	function setFields()
+	{
+		loading=true;
+		var poundsAll = 0;
+		var doc = beerxmldoc;
+		var fermentables = doc.getElementsByTagName("FERMENTABLE");
+		var hops = doc.getElementsByTagName("HOP");
+		var docsteps = doc.getElementsByTagName("MASH_STEP");
+                for (f=0;f<fermentables.length;f++)
+                {
+                        var ferm = fermentables[f];
+                        var grain=getNodeText(ferm,"NAME");
+                        var color=parseInt(getNodeText(ferm,"COLOR"));
+                        var amount=getNodeText(ferm,"AMOUNT");
+			var type=getNodeText(ferm,"TYPE");
+                        var gyield=parseInt(getNodeText(ferm,"YIELD")*0.46);
+			var pounds = amount / 0.453592;
+			var select = getItem('grain-'+f+'-type');
+			var options = select.options;
+			for (o=0;o<options.length;o++)
+			{
+				if (grain==options[o].text)
+				{
+					select.selectedIndex=o;
+					break;
+				}
+			}
+			var ounces = Math.round((pounds % 1) * 16);
+			if(type=="Grain" || type=="Adjunct")
+			poundsAll+=pounds;
+			pounds=parseInt(pounds);
+			getItem('grain-'+f+'-weight').value=pounds;				
+			getItem('grain-'+f+'-ounces').value=ounces;				
+			getItem('grain-'+f+'-pg').value=gyield;
+			getItem('grain-'+f+'-color').value=color;
+			grainGravs[select.selectedIndex]=gyield/0.46;
+			grainColors[select.selectedIndex]=color;
+                }
+		
+		for (h=0;h<hops.length;h++)
+		{
+			var hop = hops[h];
+			var name=getNodeText(hop,"NAME");
+			var alpha=parseFloat(getNodeText(hop,"ALPHA"));
+			var amount=parseFloat(getNodeText(hop,"AMOUNT"));
+			var time=parseFloat(getNodeText(hop,"TIME"));
+			var use=getNodeText(hop,"USE");
+			var select = getItem('hop-'+h+'-type');
+                        var options = select.options;
+                        for (o=0;o<options.length;o++)
+                        {
+                                if (name==options[o].text)
+                                {
+                                        select.selectedIndex=o;
+                                        break;
+                                }
+                        }
+			var ounces = 16 * amount / 0.453592;
+			getItem('hop-'+h+'-weight').value=ounces;
+			getItem('hop-'+h+'-time').value=time;
+			getItem('hop-'+h+'-alpha').value=alpha/0.;
+			hopAlphas[select.selectedIndex-1] = alpha;
+			//alert(name+"-"+time+"-"+use);
+			if(use=='Dry Hop')
+			{
+				//alert(name);
+				getItem('hop-'+h+'-dry').checked=true;
+			}
+	
+		}
+		
+		var loss =0;
+		setItem('grain-temp',getNodeText(doc,'GRAIN_TEMP'));
+		for (s=0;s<docsteps.length;s++)
+		{
+			//"<MASH_STEP><NAME>Infusion "+nextId+"</NAME><VERSION>1</VERSION><TYPE>Infusion</TYPE><INFUSE_AMOUNT>"+liters+"</INFUSE_AMOUNT><STEP_TEMP>"+temp+"</STEP_TEMP><STEP_TIME>"+mashTime+"</STEP_TIME><END_TEMP>"+endtemp+"</END_TEMP></MASH_STEP>\n"
+			var step = docsteps[s];		
+			var time = getNodeText(step,"STEP_TIME");
+			var temp = getNodeText(step,"STEP_TEMP");
+			var type = getNodeText(step,"TYPE");
+			if("Temperature"==type || "Decoction"==type)
+			{
+				var num = s - 1;
+				temp = temp*1.8 + 32;
+				getItem('step-'+num+'-time').value=time;
+				getItem('step-'+num+'-temp').value=temp;
+
+			}else
+			{
+				var endTemp = getNodeText(step,"END_TEMP");
+				var liters = getNodeText(step,"INFUSE_AMOUNT");
+				temp = temp*1.8 + 32;
+				endTemp = endTemp*1.8 + 32;
+				var qts = liters / 0.946353;
+				//qts = parseInt(qts);
+				if (qts <= 0 || qts == NaN )
+					qts = poundsAll;
+				if (s==0)
+				{
+					getItem('mash-temp').value=temp;
+					getItem('grain-time').value=time;
+					getItem('ratio').value=parseFloat(qts/poundsAll);
+					loss = (temp - endTemp);
+				}
+				else
+				{
+					var num = s - 1;
+					getItem('step-'+num+'-time').value=time;
+					getItem('step-'+num+'-temp').value=temp;
+					getItem('step-'+num+'-loss').value=loss;
+					loss = (temp - endTemp);
+				}
+			}
+		}
+
+		
+
+		//updateAll();
+		save();
+		loading=false;
+
+		
+	}
+
+	function download()
+	{
+		updateAll();
+		//if (window.plugins.emailComposer != null)
+		//{
+		//window.plugins.emailComposer.showEmailComposer("Beer XML","File attached.","","","",beerxml);
+		//}
+		//var uriContent = "data:application/xml,"+beerxml;
+		//var newWindow=window.open(uriContent,'_blank','toolbar=0,location=0,directories=0,status=0, scrollbars=1, resizable=1, copyhistory=1, menuBar=1, width=640,height=480, left=50, top=50');
+		//document.body.innerHTML='';
+		//document.open("text/xml",true);
+		//document.write(beerxml);
+		//document.close();
+	}
+
+	function showImport()
+	{
+		getItem('import-div').style.display='inline';
+	}
+
+	function hideImport()
+	{
+		getItem('import-div').style.display='none';
+	}
+
+	function doImport()
+	{
+		var xmlStr = getItem('import').value;
+		storeRecipes(xmlStr);
+		hideImport();
+	}
+	
+	function showXml()
+	{
+		
+		getItem('xml-div').style.display='inline';
+		getItem('xml-text').value=xmlAllRecipes(false);
+	}
+
+	function hideXml()
+	{
+		getItem('xml-div').style.display='none';
+	}
+	
+
+	
+	//loadBeerXml(getData('beerxml'));
+//	alert(getData('beerxml'));
+	
+
+</script>
+</head>
+<body bgcolor="#E0E0E4">
+
+<style>
+
+body
+{
+font-family:"Verdana", Verdana, sans-serif;
+font-size:x-small;
+
+}
+
+div
+{
+
+<!--width: 100%;-->
+
+}
+
+</style>
+
+<style media="only screen and (max-device-width: 480px)">
+
+
+body {     
+          margin-left:auto;
+          margin-right:auto;
+          max-width:480px;
+    }
+
+</style>
+
+<h3>BrewScript</h3>
+
+<hr>
+<font style="font-weight:bold;">Recipe Name:</font> <input id="recipe-name" size="48" onchange="updateAll();" type="textbox">
+<div id="manage">
+<br>
+<button onclick="setToDefault();/*var url=document.location; document.location=url;*/">Clear</button>
+<button onclick="store();">Save</button>
+<select id="saved-recipes" onchange="load(this.value);" style="width:100px">
+<option selected="selected">Loading...</option>
+</select>
+<button onclick="deleteRecipe();">Delete</button>
+<br>
+<a href="data:application/xml,%3CRECIPE%3E%3CNAME%3E%3C/NAME%3E%3CTYPE%3EAll%20Grain%3C/TYPE%3E%3CNOTES%3E%3C/NOTES%3E%3CFERMENTABLES%3E%3C/FERMENTABLES%3E%3COG%3E0%3C/OG%3E%3CFG%3E0%3C/FG%3E%3CMASH%3E%3CVERSION%3E1%3C/VERSION%3E%3CNAME%3ESingle-Multi-Step%20Mash%3C/NAME%3E%3CGRAIN_TEMP%3E70%3C/GRAIN_TEMP%3E%3CMASH_STEPS%3E%3CMASH_STEP%3E%3CNAME%3EInitial%20Infusion%3C/NAME%3E%3CVERSION%3E1%3C/VERSION%3E%3CTYPE%3EInfusion%3C/TYPE%3E%3CINFUSE_AMOUNT%3E0%3C/INFUSE_AMOUNT%3E%3CSTEP_TEMP%3E65.55555555555556%3C/STEP_TEMP%3E%3CSTEP_TIME%3E60%3C/STEP_TIME%3E%3CEND_TEMP%3E65.55555555555556%3C/END_TEMP%3E%3C/MASH_STEP%3E%3C/MASH_STEPS%3E%3C/MASH%3E%3CBATCH_SIZE%3E5.0%3C/BATCH_SIZE%3E%3CBOIL_SIZE%3E6.5%3C/BOIL_SIZE%3E%3CBOIL_TIME%3E60%3C/BOIL_TIME%3E%3CEFFICIENCY%3E75%3C/EFFICIENCY%3E%3CHOPS%3E%3C/HOPS%3E%3CWATERS%3E%3C/WATERS%3E%3C/RECIPE%3E" id="download-link"><button onclick="download();">Download</button></a>
+<a href="" id="download-all-link"><button onclick="xmlAllRecipes(true);">Download All</button></a><br>
+<button onclick="showImport();">Import</button><button onclick="showXml();">View XML</button><button onclick="shareRecipe();">Share</button><br>
+<div id="sync-div" style="display:none;">Server Key:&nbsp;<input size="20" id="xmlkey" readonly="readonly" type="text"><br></div>
+
+<input checked="checked" id="sync" onclick="if(this.checked){loadFromServer();}else{sync=false;storeData('xmlkey','');getItem('xmlkey').value='';getItem('sync-div').style.display='none';}" type="checkbox">Sync to server<br>
+<div id="sync-status"></div>
+<!--<button onclick="saveToServer();">Save to Server</button>
+<button onclick="loadFromServer()" >Load from Server</button>-->
+<div style="display:none" id="import-div">
+<textarea cols="49" rows="25" id="import"></textarea>
+<br>
+<button onclick="doImport();">Import XML</button><button onclick="hideImport();">Cancel</button>
+</div>
+<div style="display:none" id="xml-div">
+<textarea cols="49" rows="25" id="xml-text">&lt;DATABASE&gt;&lt;/DATABASE&gt;</textarea>
+<br>
+<button onclick="hideXml();">Close</button>
+</div>
+
+<hr>
+<b>Fermentables </b>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<button id="grain-hide" onclick="hideSection('grain');">Hide</button>
+<button id="grain-show" onclick="showSection('grain');" style="display:none;">Show</button>
+
+<div name="grain-div" id="grain-div">
+<table id="grain-tbl">
+<tbody><tr><td>Lbs</td><td>Oz</td><td>Type</td><td>PG</td><td>°L</td></tr>
+</tbody><tr id="row0"><td><input onchange="updateAll();" size="3" id="grain-0-weight" style="font-size:x-small;width:76px" type="number"></td><td><input size="3" onchange="updatePg(0)" id="grain-0-ounces" style="font-size:x-small;width:76px" type="number"></td><td><select onchange="updateAll();" style="font-size:x-small;width:256px" id="grain-0-type"><option selected="selected">Select Grain</option><option>-----------------Grains------------------</option><option type="grain">Acid Malt</option><option type="grain">Amber Malt</option><option type="grain">Aromatic Malt</option><option type="grain">Barley Hulls</option><option type="grain">Barley, Flaked</option><option type="grain">Barley, Raw</option><option type="grain">Barley, Torrefied</option><option type="grain">Biscuit Malt</option><option type="grain">Black (Patent) Malt</option><option type="grain">Black Barley (Roast Barley)</option><option type="grain">Briess - 2 Row Brewers Malt</option><option type="grain">Briess - 2 Row Carapils Malt</option><option type="grain">Briess - 6 Row Brewers Malt</option><option type="grain">Briess - Aromatic Malt</option><option type="grain">Briess - Ashburne Mild Malt</option><option type="grain">Briess - Black Barley</option><option type="grain">Briess - Black Malt</option><option type="grain">Briess - Black Malted Barley Flour</option><option type="grain">Briess - Blackprinz Malt</option><option type="grain">Briess - Bonlander Munich Malt</option><option type="grain">Briess - Carabrown Malt</option><option type="grain">Briess - Caracrystal Wheat Malt</option><option type="grain">Briess - Carapils Malt</option><option type="grain">Briess - Chocolate Malt</option><option type="grain">Briess - Dark Chocolate Malt</option><option type="grain">Briess - Extra Special Malt</option><option type="grain">Briess - Midnight Wheat Malt</option><option type="grain">Briess - Munich Malt 10L</option><option type="grain">Briess - Munich Malt 20L</option><option type="grain">Briess - Pale Ale Malt</option><option type="grain">Briess - Pilsen Malt</option><option type="grain">Briess - Roasted Barley</option><option type="grain">Briess - Rye Malt</option><option type="grain">Briess - Smoked Malt</option><option type="grain">Briess - Special Roast Malt</option><option type="grain">Briess - Victory Malt</option><option type="grain">Briess - Vienna Malt</option><option type="grain">Briess - Wheat Malt, Red</option><option type="grain">Briess - Wheat Malt, White</option><option type="grain">Brown Malt (British Chocolate)</option><option type="grain">Brumalt</option><option type="grain">Cara-Pils/Dextrine</option><option type="grain">Caraamber</option><option type="grain">Carafa</option><option type="grain">Carafa II</option><option type="grain">Carafa III</option><option type="grain">Carafoam</option><option type="grain">Caramel/Crystal Malt - 10L</option><option type="grain">Caramel/Crystal Malt - 120L</option><option type="grain">Caramel/Crystal Malt - 20L</option><option type="grain">Caramel/Crystal Malt - 30L</option><option type="grain">Caramel/Crystal Malt - 40L</option><option type="grain">Caramel/Crystal Malt - 60L</option><option type="grain">Caramel/Crystal Malt - 80L</option><option type="grain">Caramunich Malt</option><option type="grain">Carared</option><option type="grain">Caravienne Malt</option><option type="grain">Carawheat (GR)</option><option type="grain">Chocolate Malt (UK)</option><option type="grain">Chocolate Malt (US)</option><option type="grain">Corn, Flaked</option><option type="grain">Grits</option><option type="grain">Honey Malt</option><option type="grain">Melanoiden Malt</option><option type="grain">Mild Malt</option><option type="grain">Munich Malt</option><option type="grain">Munich Malt - 10L</option><option type="grain">Munich Malt - 20L</option><option type="grain">Oats, Flaked</option><option type="grain">Oats, Malted</option><option type="grain">Pale Malt (2 Row) Bel</option><option type="grain">Pale Malt (2 Row) UK</option><option type="grain">Pale Malt (2 Row) US</option><option type="grain">Pale Malt (6 Row) US</option><option type="grain">Peat Smoked Malt</option><option type="grain">Pilsner (2 Row) Bel</option><option type="grain">Pilsner (2 Row) Ger</option><option type="grain">Pilsner (2 Row) UK</option><option type="grain">Rahr - 2 Row Malt</option><option type="grain">Rahr - 6 Row Malt</option><option type="grain">Rahr - Pale Ale Malt</option><option type="grain">Rahr - Premium Pilsner Malt</option><option type="grain">Rahr - Red Wheat Malt</option><option type="grain">Rahr - White Wheat Malt</option><option type="grain">Rauch Malt (Germany)</option><option type="grain">Rice Hulls</option><option type="grain">Rice, Flaked</option><option type="grain">Roasted Barley</option><option type="grain">Rye Malt</option><option type="grain">Rye, Flaked</option><option type="grain">Simpsons - Aromatic Malt</option><option type="grain">Simpsons - Black Malt</option><option type="grain">Simpsons - Caramalt</option><option type="grain">Simpsons - Caramalt Light</option><option type="grain">Simpsons - Chocolate Malt</option><option type="grain">Simpsons - Coffee Malt</option><option type="grain">Simpsons - Crystal Dark</option><option type="grain">Simpsons - Crystal Extra Dark</option><option type="grain">Simpsons - Crystal Medium</option><option type="grain">Simpsons - Crystal Rye</option><option type="grain">Simpsons - Golden Naked Oats</option><option type="grain">Simpsons - Golden Promise</option><option type="grain">Simpsons - Maris Otter</option><option type="grain">Simpsons - Peated Malt</option><option type="grain">Simpsons - Roasted Barley</option><option type="grain">Smoked Malt</option><option type="grain">Special B Malt</option><option type="grain">Special Roast</option><option type="grain">Toasted Malt</option><option type="grain">Victory Malt</option><option type="grain">Vienna Malt</option><option type="grain">Weyermann - Acidulated Malt</option><option type="grain">Weyermann - Bohemian Pilsner Malt</option><option type="grain">Weyermann - Carafa I</option><option type="grain">Weyermann - Carafa II</option><option type="grain">Weyermann - Carafa III</option><option type="grain">Weyermann - Carafoam</option><option type="grain">Weyermann - Carawheat</option><option type="grain">Weyermann - Chocolate Rye</option><option type="grain">Weyermann - Chocolate Wheat</option><option type="grain">Weyermann - Dark Wheat Malt</option><option type="grain">Weyermann - Dehusked Carafa I</option><option type="grain">Weyermann - Dehusked Carafa II</option><option type="grain">Weyermann - Dehusked Carafa III</option><option type="grain">Weyermann - Light Munich Malt</option><option type="grain">Weyermann - Melanoiden Malt</option><option type="grain">Weyermann - Pale Ale Malt</option><option type="grain">Weyermann - Pale Wheat Malt</option><option type="grain">Weyermann - Pilsner Malt</option><option type="grain">Weyermann - Rye Malt</option><option type="grain">Weyermann - Smoked Malt</option><option type="grain">Weyermann - Vienna Malt</option><option type="grain">Wheat Malt, Bel</option><option type="grain">Wheat Malt, Dark</option><option type="grain">Wheat Malt, Ger</option><option type="grain">Wheat, Flaked</option><option type="grain">Wheat, Roasted</option><option type="grain">Wheat, Torrified</option><option type="grain">White Wheat Malt</option><option>----------------Extracts-----------------</option><option type="sugar">Briess LME - Golden Light</option><option type="sugar">Briess LME - Maltoferm A-6000 (Black Malt Extract)</option><option type="sugar">Briess LME - Munich</option><option type="sugar">Briess LME - Pilsen Light</option><option type="sugar">Briess LME - Sparkling Amber</option><option type="sugar">Briess LME - Sweet Brown Rice Syrup</option><option type="sugar">Briess LME - Traditional Dark</option><option type="sugar">Briess LME - White Sorghum Syrup</option><option type="sugar">Coopers LME - Amber</option><option type="sugar">Coopers LME - Dark</option><option type="sugar">Coopers LME - Light</option><option type="sugar">Coopers LME - Wheat</option><option type="sugar">Dark Liquid Extract</option><option type="sugar">Honey</option><option type="sugar">Liquid Extract (LME) - Amber</option><option type="sugar">Liquid Extract (LME) - Pale</option><option type="sugar">Liquid Extract (LME) - Pilsner</option><option type="sugar">Liquid Extract (LME) - Wheat</option><option type="sugar">Muntons LME - Amber</option><option type="sugar">Muntons LME - Dark</option><option type="sugar">Muntons LME - Extra Light</option><option type="sugar">Muntons LME - Light</option><option type="sugar">Muntons LME - Wheat</option><option type="sugar">Rice Extract Syrup</option><option>---------------Dry Extracts---------------</option><option type="sugar">Briess DME - Bavarian Wheat</option><option type="sugar">Briess DME - Golden Light</option><option type="sugar">Briess DME - Maltoferm A-6001 (Black Malt Extract)</option><option type="sugar">Briess DME - Pilsen Light</option><option type="sugar">Briess DME - Sparkling Amber</option><option type="sugar">Briess DME - Traditional Dark</option><option type="sugar">Dry Extract (DME) - Amber</option><option type="sugar">Dry Extract (DME) - Dark</option><option type="sugar">Dry Extract (DME) - Extra Light</option><option type="sugar">Dry Extract (DME) - Light</option><option type="sugar">Dry Extract (DME) - Wheat</option><option type="sugar">Muntons DME - Amber</option><option type="sugar">Muntons DME - Dark</option><option type="sugar">Muntons DME - Extra Dark</option><option type="sugar">Muntons DME - Extra Light</option><option type="sugar">Muntons DME - Light</option><option type="sugar">Muntons DME - Wheat</option><option>-----------------Sugars------------------</option><option type="sugar">Brown Sugar, Dark</option><option type="sugar">Brown Sugar, Light</option><option type="sugar">Candi Sugar, Amber</option><option type="sugar">Candi Sugar, Clear</option><option type="sugar">Candi Sugar, Dark</option><option type="sugar">Cane (Beet) Sugar</option><option type="sugar">Corn Sugar (Dextrose)</option><option type="sugar">Corn Syrup</option><option type="sugar">Dememera Sugar</option><option type="sugar">Invert Sugar</option><option type="sugar">Maple Syrup</option><option type="sugar">Milk Sugar (Lactose)</option><option type="sugar">Molasses</option><option type="sugar">Sugar, Table (Sucrose)</option><option type="sugar">Turbinado</option></select></td><td><input size="3" onchange="updatePg(0)" value="0" id="grain-0-pg" style="font-size:x-small;width:76px" type="number"></td><td><input size="3" onchange="updateColor(0)" value="0" id="grain-0-color" style="font-size:x-small;width:76px" type="number"></td></tr></table>
+<button onclick="addGrainList();">Add Fermentable</button>&nbsp;&nbsp;<button onclick="deleteGrainRow();">Delete Fermentable</button>
+</div>
+<hr>
+<b>Brew Calc</b>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<button id="mash-hide" onclick="hideSection('mash');">Hide</button>
+<button id="mash-show" onclick="showSection('mash');" style="display:none;">Show</button>
+<div name="mash-div" id="mash-div">
+	<table>
+	<tbody><tr><th colspan="2">Recipe Settings	
+	</th></tr><tr><td>Batch Size (gal):</td><td><input value="5.0" size="5" id="batch-size" onchange="updateAll();" autocomplete="off" type="number">
+	</td></tr><tr><td>Pre-boil Volume (gal):</td><td><input value="6.5" size="5" id="pre-boil" onchange="updateAll();" autocomplete="off" type="number">
+	</td></tr><tr><td>Boil Time (min):</td><td><input value="60" size="5" id="boil-time" onchange="updateAll();" autocomplete="off" type="number">
+	</td></tr><tr><td>Efficiency:</td><td><input value="75" size="5" id="efficiency" onchange="updateAll();" autocomplete="off" type="number">	
+	</td></tr><tr><td>Grain Absorption (qts/lb):</td><td><input value="13" size="5" id="grain-absorption" onchange="grainAbsorption=this.value/100; updateAll();" autocomplete="off" type="number">
+	</td></tr><tr><td>Mash Tun Loss (qts):</td><td><input value="0.2" size="5" id="tun-loss" onchange="tunLoss=this.value; updateAll();" autocomplete="off" type="number">
+	</td></tr><tr><td>Yeast Attenuation:</td><td><input value="75" size="5" id="attenuation" onchange="updateAll();" autocomplete="off" type="number">	
+	</td></tr><tr><th colspan="2">Initial Infusion
+	</th></tr><tr><td>Step Time (min):</td><td><input size="5" value="60" id="grain-time" onchange="updateAll();" autocomplete="off" type="number">
+	</td></tr><tr><td>Grain Temp (°F):</td><td><input size="5" value="70" id="grain-temp" onchange="updateAll();" autocomplete="off" type="number">
+	</td></tr><tr><td>Mash Temp (°F):</td><td><input size="5" value="150" id="mash-temp" onchange="updateAll();" autocomplete="off" type="number">
+	</td></tr><tr><td>Qts/Lb:</td><td><input size="5" value="1" id="ratio" onchange="updateAll();" autocomplete="off" type="number">
+	</td></tr><tr><td>Extra Decoction (%):</td><td><input size="5" value="18" id="extra-decoct" onchange="updateAll();" autocomplete="off" type="number">
+	</td></tr><tr><td>Water Temp (°F):</td><td><input value="166" size="5" readonly="readonly" id="strike-temp" type="number">
+	</td></tr><tr><td>Qts of Water:</td><td><input value="0" size="5" readonly="readonly" id="strike-qts" type="number">
+	</td></tr></tbody></table>
+<div id="stepInfusions">
+
+</div>
+<br>
+<table><tbody><tr><td>
+<button onclick="addStepInfusion();">Add Infusion Step&nbsp;&nbsp;&nbsp;</button>&nbsp;&nbsp;</td><td><button onclick="addHeatedStep();">Add Heated Step&nbsp;</button>&nbsp;&nbsp;
+</td></tr><tr><td>
+<button onclick="addDecoctionStep();">Add Decoction Step</button>&nbsp;&nbsp;</td><td><button onclick="deleteStepInfusion();">Delete Mash Step</button>&nbsp;&nbsp;
+</td></tr></tbody></table>
+</div>
+<hr>
+<b>Hops</b>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<button id="hops-hide" onclick="hideSection('hops');">Hide</button>
+<button id="hops-show" onclick="showSection('hops');" style="display:none;">Show</button>
+<div name="hops-div" id="hops-div">
+<table id="hop-tbl">
+<tbody><tr><td>Oz.</td><td>Min</td><td style="font-size:x-small;">Dry<br> Hop</td><td>Type</td><td>Alpha
+</td></tr></tbody><tr id="row0"><td><input onfocus="updateHopAlphas();" size="4" id="hop-0-weight" style="font-size:x-small;width:76px" type="number"></td><td><input onchange="updateAll();" size="4" id="hop-0-time" style="font-size:x-small;width:76px" type="number"></td><td><input onchange="updateAll();" id="hop-0-dry" style="font-size:x-small;width:76px" type="checkbox"></td><td><select onchange="updateHopAlphas();" id="hop-0-type" style="font-size:x-small;width:256px"><option selected="selected">Select Hop</option><option>Agnus</option><option>Ahtanum</option><option>Amarillo</option><option>Apollo</option><option>Bor</option><option>Bramling</option><option>Bravo</option><option>Brewers Gold</option><option>Bullion</option><option>Cascade</option><option>Centennial</option><option>Challenger</option><option>Chelan</option><option>Chinook</option><option>Citra</option><option>Cluster</option><option>Columbus/Tomahawk/Zeus</option><option>Crystal</option><option>El Dorado</option><option>First Gold</option><option>Fuggles</option><option>Galena</option><option>Glacier</option><option>Golding</option><option>Green Bullet</option><option>Hallertau</option><option>Harmonie</option><option>Hersbrucker</option><option>Kent Goldings</option><option>Liberty</option><option>Lublin (Lubelski)</option><option>Magnum</option><option>Marynka</option><option>Millennium</option><option>Mount Hood</option><option>Northern Brewer</option><option>Nugget</option><option>Palisade</option><option>Perle</option><option>Phoenix</option><option>Premiant</option><option>Pride of Ringwood</option><option>Progress</option><option>Rubin</option><option>Saaz (Czech Republic)</option><option>Saaz (USA)</option><option>Simcoe</option><option>Sladek</option><option>Sorachi Ace</option><option>Spalt</option><option>Sterling</option><option>Strisselspalt</option><option>Styrian Goldings</option><option>Summit</option><option>Super Galena</option><option>Target</option><option>Tettnang</option><option>Tillicum</option><option>Tradition</option><option>Vanguard</option><option>Warrior</option><option>Willamette</option></select></td><td><input onchange="setAlpha(0);" size="4" id="hop-0-alpha" style="font-size:x-small;width:76px" type="number"></td></tr></table>
+<button onclick="addHopList();">Add Hop</button>&nbsp;&nbsp;<button onclick="deleteHopRow();">Delete Hop</button><br>
+</div>
+</div>
+<hr>
+<b>Results</b>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<button id="results-hide" onclick="hideSection('results');">Hide</button>
+<button id="results-show" onclick="showSection('results');" style="display:none;">Show</button>
+<div name="results-div" id="results-div">
+<div id="grain-results" style="font-size:small;"></div>
+<div id="hop-results" style="font-size:small;">
+</div>
+<div id="mash-results" styel="font-size:small;"><table style="font-size:x-small;"><tbody><tr><th colspan="2">Batch Settings</th></tr><tr><td>Batch size:</td><td>5.0 Gal</td></tr><tr><td>Pre-boil Volume:</td><td>6.5 Gal</td></tr><tr><td>Efficiency:</td><td>75%</td></tr><tr><td>Pre-Boil Gravity Units:</td><td>0</td></tr><tr><td>Post-Boil Gravity Units*:</td><td>0</td></tr><tr><td style="font-size=x-small;">&nbsp;&nbsp;*minus extracts and sugars</td></tr><tr><th colspan="2">Initial Infusion</th></tr><tr><td>Step Time:</td><td>60 min</td></tr><tr><td>Mash Temp:</td><td>150° F</td></tr><tr><td>Strike Water:</td><td>0 Qts</td></tr><tr><td>Strike Water Temp:</td><td>166° F</td></tr><tr><th colspan="2">Sparge</th></tr><tr><td>Sparge Water:</td><td>26.4 Qts</td></tr><tr><td>Sparge Water Temp:</td><td>170° F</td><td></td></tr></tbody></table></div>
+</div>
+<hr>
+<b>Recipe Notes</b>
+<button id="notes-hide" onclick="hideSection('notes');">Hide</button>
+<button id="notes-show" onclick="showSection('notes');" style="display:none;">Show</button>
+<br>
+<div id="notes-div">
+<textarea cols="49" rows="10" id="notes"></textarea>
+</div>
+<pre id="beerxml"></pre>
+<hr>
+<b>About</b>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<button id="about-hide" onclick="hideSection('about');" style="display:none;">Hide</button>
+<button id="about-show" onclick="showSection('about');">Show</button>
+
+<div id="about-div" style="display:none;">
+<p style="font-size:small;">BrewScript is an Open Source program to give you all the information you need for your homebrew recipe.  Developed by <a href="mailto:admin@brewscript.com">Brian Miller</a>.	Source is released under GPLv3.  For more information about this application, visit <a href="http://sourceforge.net/projects/brewscript/">SourceForge</a>.
+The hop/grain database is sourced from <a href="http://brewtarget.sourceforge.net/">Brewtarget</a>.  Formulas for grain/mash/hop calculations from John Palmer's <a href="http://www.howtobrew.com/">"How To Brew"</a>. Sparge calulations from <a href="http://www.brew365.com/technique_calculating_mash_water_volume.php">Brew 365</a>.
+ Sparge calculations assume 13% grain absorption and that you will loose
+ one half gallon during the lauter and another half during the sparge.  
+You may need to increase this based on your system. 
+<br>
+This calculator will do all the math for your brew day.  All entries 
+update the corresponding fields when one is changed.  The results 
+section provides all the information for your mash and boil.  Selecting 
+"Sync to server" will store your data on the server using a key to 
+identify yourself.  When this is enabled, the "Save" function will 
+update the server with your recipe data.  If this option is not 
+selected, all data is stored in the browser cache.  Clearing your 
+browser cache (such as clearing your history) will wipe out your data, 
+unless it is synced to the server.  
+<br><br>This is a work in development.  Use at your own risk. <br>
+What Works:<br>
+Pretty much every field on the page<br>
+Infusion Calculations including step infusions.<br>
+Gravity and IBU calculations.<br>
+SRM calculations.<br>
+Import/Export to/from BeerXML<br>
+Save/load recipe<br>
+BU/GU has 7 ratings:<br>
+&nbsp;&nbsp;*overly malty<br>
+&nbsp;&nbsp;*extra malty<br>
+&nbsp;&nbsp;*slightly malty<br>
+&nbsp;&nbsp;*balanced<br>
+&nbsp;&nbsp;*slightly hoppy<br>
+&nbsp;&nbsp;*extra hoppy<br>
+&nbsp;&nbsp;*overly hoppy<br>
+Note: The "overly malty" and "overly hoppy" ratings may result in undrinkable beer.<br> 
+<br>
+To-do:<br>
+Add style comparison.<br>
+Add yeast selection.<br>
+Add misc items.<br>
+
+</p>
+</div>
+<script>
+
+getDatabase();
+start();
+
+
+
+
+</script>
+
+
+
+</body></html>
